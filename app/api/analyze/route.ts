@@ -72,10 +72,10 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
 
   // Generate comprehensive markdown report matching CLI detail level
   try {
-    const aiScore = aiVisibility?.visibility?.score || 0;
-    const entityScore = entities?.entities?.semanticScore?.entityDensity || 0;
-    const topicScore = entities?.entities?.semanticScore?.topicCoverage || 0;
-    const eeatScore = entities?.entities?.semanticScore?.eeatScore || 0;
+    const aiScore = (aiVisibility as any)?.visibility?.score || 0;
+    const entityScore = (entities as any)?.entities?.semanticScore?.entityDensity || 0;
+    const topicScore = (entities as any)?.entities?.semanticScore?.topicCoverage || 0;
+    const eeatScore = (entities as any)?.entities?.semanticScore?.eeatScore || 0;
     const overallScore = Math.round((aiScore + entityScore + eeatScore) / 3);
 
     const grade = overallScore >= 90 ? 'A' : overallScore >= 80 ? 'B' : overallScore >= 70 ? 'C' : overallScore >= 60 ? 'D' : 'F';
@@ -83,12 +83,12 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
     const gradeLabel = overallScore >= 90 ? 'Excellent' : overallScore >= 80 ? 'Good' : overallScore >= 70 ? 'Fair' : overallScore >= 60 ? 'Poor' : 'Critical';
 
     // Extract data with safe defaults
-    const namedEntities = entities?.entities?.namedEntities || [];
-    const topics = entities?.entities?.topics || [];
-    const eeatSignals = entities?.entities?.eeatSignals || {};
-    const missingEntities = entities?.entities?.missingEntities || [];
-    const schemaAnalysis = entities?.entities?.schemaAnalysis || {};
-    const pageData = entities?.pageData || {};
+    const namedEntities = (entities as any)?.entities?.namedEntities || [];
+    const topics = (entities as any)?.entities?.topics || [];
+    const eeatSignals = (entities as any)?.entities?.eeatSignals || {};
+    const missingEntities = (entities as any)?.entities?.missingEntities || [];
+    const schemaAnalysis = (entities as any)?.entities?.schemaAnalysis || {};
+    const pageData = (entities as any)?.pageData || {};
 
     // Format named entities section
     const namedEntitiesText = namedEntities.length > 0
@@ -130,7 +130,7 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
     ).join('\n\n');
 
     // Format AI engine results with full detail matching CLI format
-    const promptResults = aiVisibility?.promptResults || [];
+    const promptResults = (aiVisibility as any)?.promptResults || [];
     let aiEngineResultsText = '';
 
     if (promptResults.length > 0) {
@@ -287,14 +287,14 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
 
     // Extract domain/institution name
     const domain = new URL(url).hostname.replace('www.', '').split('.')[0];
-    const institutionName = entities?.pageData?.organizationName || domain;
-    const location = entities?.entities?.location || entities?.pageData?.location;
+    const institutionName = (entities as any)?.pageData?.organizationName || domain;
+    const location = (entities as any)?.entities?.location || (entities as any)?.pageData?.location;
     const locationText = location?.city && location?.state
       ? `${location.city}, ${location.state}${location.region ? ' (' + location.region + ')' : ''}`
       : location?.state || 'Unknown';
 
     // Count total AI engine queries
-    const totalQueries = promptResults.length * (aiVisibility?.summary?.enginesChecked || 0);
+    const totalQueries = promptResults.length * ((aiVisibility as any)?.summary?.enginesChecked || 0);
     const totalCitations = promptResults.reduce((sum: number, r: any) => {
       let count = 0;
       if (r.checks.googleAIOverview?.cited) count++;
@@ -327,12 +327,12 @@ ${gradeEmoji} **${gradeLabel}** - ${
 
 ## 📊 AI Visibility Score: ${aiScore}/100
 
-Tested across ${totalQueries} AI engine queries. ${totalCitations} citation${totalCitations !== 1 ? 's' : ''} found with ${aiVisibility?.visibility?.citationRate || 0}% citation rate.
+Tested across ${totalQueries} AI engine queries. ${totalCitations} citation${totalCitations !== 1 ? 's' : ''} found with ${(aiVisibility as any)?.visibility?.citationRate || 0}% citation rate.
 
 ### Citation Performance
-- **Citation Rate:** ${aiVisibility?.visibility?.citationRate || 0}%
-- **Domain Mention Rate:** ${aiVisibility?.visibility?.domainMentionRate || 0}%
-- **Average Position:** ${aiVisibility?.visibility?.averagePosition ? '#' + aiVisibility.visibility.averagePosition : 'Not cited'}
+- **Citation Rate:** ${(aiVisibility as any)?.visibility?.citationRate || 0}%
+- **Domain Mention Rate:** ${(aiVisibility as any)?.visibility?.domainMentionRate || 0}%
+- **Average Position:** ${(aiVisibility as any)?.visibility?.averagePosition ? '#' + (aiVisibility as any).visibility.averagePosition : 'Not cited'}
 
 
 ### Tested Prompts
