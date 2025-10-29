@@ -518,21 +518,20 @@ export async function POST(request: NextRequest) {
           const result = await runAnalysis(url, keyword, sendProgress);
           console.log(`[API] Analysis completed successfully, preparing response`);
 
-          // Send the final result with Base64-encoded markdown to avoid JSON escaping issues
-          console.log(`[API] Stringifying result (markdown length: ${result.markdown?.length || 0} chars)`);
+          // Send the final result with Base64-encoded entire result to avoid ALL JSON escaping issues
+          console.log(`[API] Encoding result (markdown length: ${result.markdown?.length || 0} chars)`);
 
-          // Base64 encode the markdown to avoid any JSON escaping issues
-          const markdownBase64 = result.markdown ? Buffer.from(result.markdown).toString('base64') : '';
+          // Base64 encode the ENTIRE result object to avoid any JSON escaping issues
+          const resultJson = JSON.stringify(result);
+          const resultBase64 = Buffer.from(resultJson).toString('base64');
 
-          const safeResult = {
-            ...result,
-            markdown: markdownBase64,
-            markdownEncoded: true, // Signal to client that markdown is base64 encoded
-          };
-
-          const data = JSON.stringify({ type: 'result', data: safeResult });
+          const data = JSON.stringify({
+            type: 'result',
+            data: resultBase64,
+            encoded: true // Signal to client that data is base64 encoded
+          });
           controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          console.log(`[API] Result sent successfully (markdown base64 encoded, ${markdownBase64.length} chars)`)
+          console.log(`[API] Result sent successfully (base64 encoded, ${resultBase64.length} chars)`)
 
           controller.close();
         } catch (error: any) {

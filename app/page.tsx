@@ -51,12 +51,13 @@ export default function Home() {
             if (data.type === 'progress') {
               setProgress({ step: data.step, message: data.message });
             } else if (data.type === 'result') {
-              // Decode Base64-encoded markdown if present
-              if (data.data.markdownEncoded && data.data.markdown) {
-                data.data.markdown = atob(data.data.markdown);
-                delete data.data.markdownEncoded;
+              // Decode Base64-encoded result if present
+              let resultData = data.data;
+              if (data.encoded && typeof data.data === 'string') {
+                const decodedJson = atob(data.data);
+                resultData = JSON.parse(decodedJson);
               }
-              setResults(data.data);
+              setResults(resultData);
               setState('complete');
             } else if (data.type === 'error') {
               setError(data.error);
