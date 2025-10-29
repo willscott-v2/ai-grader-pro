@@ -1,9 +1,19 @@
 import { NextRequest } from 'next/server';
 
-// Helper function to safely convert text to string (JSON.stringify will handle escaping)
+// Helper function to safely convert text to string
 function safeString(text: any): string {
   if (text === null || text === undefined) return '';
   return String(text);
+}
+
+// Helper to sanitize markdown for safe JSON stringification
+function sanitizeMarkdown(markdown: string): string {
+  if (!markdown) return '';
+  // Remove or replace characters that commonly break JSON
+  return markdown
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/\u2028/g, ' ') // Replace line separator
+    .replace(/\u2029/g, ' '); // Replace paragraph separator
 }
 
 // Import analyzer modules
@@ -471,7 +481,7 @@ ${overallScore >= 70
 
     return {
       analysis,
-      markdown,
+      markdown: sanitizeMarkdown(markdown),
     };
   } catch (error: any) {
     console.error('Error generating report:', error);
