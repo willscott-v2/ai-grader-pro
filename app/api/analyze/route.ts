@@ -357,7 +357,7 @@ Tested across ${totalQueries} AI engine queries. ${totalCitations} citation${tot
 
 ### Tested Prompts
 ${keywordExpansion.map((k: any, i: number) =>
-  `${i + 1}. "${escapeForJson(k.prompt)}" *(${k.intent}, ${k.type})*`
+  `${i + 1}. "${safeString(k.prompt)}" *(${k.intent}, ${k.type})*`
 ).join('\n')}
 
 ---
