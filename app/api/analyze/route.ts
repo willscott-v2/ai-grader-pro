@@ -31,12 +31,18 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
   }
 
   // Step 1: Analyze entities
+  console.log(`[Analysis] Step 1/3: Starting entity analysis for ${url}`);
   sendProgress('Analyzing page entities and content...', '1/3');
   let entities;
   try {
     entities = await analyzePageEntities(url);
+    console.log(`[Analysis] Entity analysis completed:`, {
+      namedEntities: (entities as any)?.entities?.namedEntities?.length || 0,
+      topics: (entities as any)?.entities?.topics?.length || 0,
+      entityScore: (entities as any)?.entities?.semanticScore?.entityDensity || 0
+    });
   } catch (error: any) {
-    console.warn(`Entity analysis failed: ${error.message}`);
+    console.error(`[Analysis] Entity analysis failed: ${error.message}`);
     entities = {
       url,
       entities: { semanticScore: { entityDensity: 0, topicCoverage: 0, eeatScore: 0 } },
@@ -45,13 +51,15 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
   }
 
   // Step 2: Expand keyword
+  console.log(`[Analysis] Step 2/3: Expanding keyword "${keyword}"`);
   sendProgress('Generating AI-ready search prompts...', '2/3');
   const location = (entities as any).entities?.location || (entities as any).pageData?.location || null;
   let keywordExpansion;
   try {
     keywordExpansion = await expandKeyword(keyword, 5, location);
+    console.log(`[Analysis] Generated ${keywordExpansion.length} keyword variations`);
   } catch (error: any) {
-    console.warn(`Keyword expansion failed: ${error.message}`);
+    console.error(`[Analysis] Keyword expansion failed: ${error.message}`);
     keywordExpansion = [
       { prompt: `What is ${keyword}?`, intent: 'informational', type: 'what' },
       { prompt: `Best ${keyword}`, intent: 'comparison', type: 'best' },
@@ -60,12 +68,18 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
   }
 
   // Step 3: Check AI visibility
+  console.log(`[Analysis] Step 3/3: Checking AI visibility across ${keywordExpansion.length} prompts`);
   sendProgress('Testing AI visibility across search engines...', '3/3');
   let aiVisibility;
   try {
     aiVisibility = await checkAIVisibility(url, keywordExpansion);
+    console.log(`[Analysis] AI visibility check completed:`, {
+      score: (aiVisibility as any)?.visibility?.score || 0,
+      citationRate: (aiVisibility as any)?.visibility?.citationRate || 0,
+      promptsTested: (aiVisibility as any)?.promptResults?.length || 0
+    });
   } catch (error: any) {
-    console.warn(`AI visibility check failed: ${error.message}`);
+    console.error(`[Analysis] AI visibility check failed: ${error.message}`);
     aiVisibility = {
       url,
       visibility: { score: 0, citationRate: 0, domainMentionRate: 0 },
@@ -500,18 +514,23 @@ export async function POST(request: NextRequest) {
         try {
           // Run the analysis with progress updates
           const result = await runAnalysis(url, keyword, sendProgress);
+          console.log(`[API] Analysis completed successfully, preparing response`);
 
           // Send the final result with safe JSON stringification
           try {
+            console.log(`[API] Stringifying result (markdown length: ${result.markdown?.length || 0} chars)`);
             const data = JSON.stringify({ type: 'result', data: result });
             controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+            console.log(`[API] Result sent successfully`);
           } catch (jsonError: any) {
-            console.error('JSON stringify error:', jsonError);
+            console.error('[API] JSON stringify error:', jsonError);
+            console.error('[API] Error occurred at position:', jsonError.message);
             // If JSON stringification fails, send a simplified version
             const safeResult = {
               ...result,
               markdown: result.markdown ? result.markdown.substring(0, 10000) + '\n\n[Report truncated due to size]' : ''
             };
+            console.log(`[API] Sending truncated result instead`);
             const data = JSON.stringify({ type: 'result', data: safeResult });
             controller.enqueue(encoder.encode(`data: ${data}\n\n`));
           }
