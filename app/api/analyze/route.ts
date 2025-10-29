@@ -487,9 +487,20 @@ export async function POST(request: NextRequest) {
           // Run the analysis with progress updates
           const result = await runAnalysis(url, keyword, sendProgress);
 
-          // Send the final result
-          const data = JSON.stringify({ type: 'result', data: result });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          // Send the final result with safe JSON stringification
+          try {
+            const data = JSON.stringify({ type: 'result', data: result });
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          } catch (jsonError: any) {
+            console.error('JSON stringify error:', jsonError);
+            // If JSON stringification fails, send a simplified version
+            const safeResult = {
+              ...result,
+              markdown: result.markdown ? result.markdown.substring(0, 10000) + '\n\n[Report truncated due to size]' : ''
+            };
+            const data = JSON.stringify({ type: 'result', data: safeResult });
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          }
 
           controller.close();
         } catch (error: any) {
