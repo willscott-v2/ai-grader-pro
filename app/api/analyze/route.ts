@@ -518,24 +518,21 @@ export async function POST(request: NextRequest) {
           const result = await runAnalysis(url, keyword, sendProgress);
           console.log(`[API] Analysis completed successfully, preparing response`);
 
-          // Send the final result with safe JSON stringification
-          try {
-            console.log(`[API] Stringifying result (markdown length: ${result.markdown?.length || 0} chars)`);
-            const data = JSON.stringify({ type: 'result', data: result });
-            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-            console.log(`[API] Result sent successfully`);
-          } catch (jsonError: any) {
-            console.error('[API] JSON stringify error:', jsonError);
-            console.error('[API] Error occurred at position:', jsonError.message);
-            // If JSON stringification fails, send a simplified version
-            const safeResult = {
-              ...result,
-              markdown: result.markdown ? result.markdown.substring(0, 10000) + '\n\n[Report truncated due to size]' : ''
-            };
-            console.log(`[API] Sending truncated result instead`);
-            const data = JSON.stringify({ type: 'result', data: safeResult });
-            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          }
+          // Send the final result with Base64-encoded markdown to avoid JSON escaping issues
+          console.log(`[API] Stringifying result (markdown length: ${result.markdown?.length || 0} chars)`);
+
+          // Base64 encode the markdown to avoid any JSON escaping issues
+          const markdownBase64 = result.markdown ? Buffer.from(result.markdown).toString('base64') : '';
+
+          const safeResult = {
+            ...result,
+            markdown: markdownBase64,
+            markdownEncoded: true, // Signal to client that markdown is base64 encoded
+          };
+
+          const data = JSON.stringify({ type: 'result', data: safeResult });
+          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          console.log(`[API] Result sent successfully (markdown base64 encoded, ${markdownBase64.length} chars)`)
 
           controller.close();
         } catch (error: any) {

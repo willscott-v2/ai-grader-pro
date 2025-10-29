@@ -51,6 +51,11 @@ export default function Home() {
             if (data.type === 'progress') {
               setProgress({ step: data.step, message: data.message });
             } else if (data.type === 'result') {
+              // Decode Base64-encoded markdown if present
+              if (data.data.markdownEncoded && data.data.markdown) {
+                data.data.markdown = atob(data.data.markdown);
+                delete data.data.markdownEncoded;
+              }
               setResults(data.data);
               setState('complete');
             } else if (data.type === 'error') {
