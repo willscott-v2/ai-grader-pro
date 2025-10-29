@@ -37,31 +37,40 @@ export default function Home() {
         throw new Error('Failed to read response');
       }
 
+      let buffer = '';
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        const lines = buffer.split('\n');
+        // Keep the last incomplete line in the buffer
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
-            const data = JSON.parse(line.slice(6));
+            try {
+              const data = JSON.parse(line.slice(6));
 
-            if (data.type === 'progress') {
-              setProgress({ step: data.step, message: data.message });
-            } else if (data.type === 'result') {
-              // Decode Base64-encoded result if present
-              let resultData = data.data;
-              if (data.encoded && typeof data.data === 'string') {
-                const decodedJson = atob(data.data);
-                resultData = JSON.parse(decodedJson);
+              if (data.type === 'progress') {
+                setProgress({ step: data.step, message: data.message });
+              } else if (data.type === 'result') {
+                // Decode Base64-encoded result if present
+                let resultData = data.data;
+                if (data.encoded && typeof data.data === 'string') {
+                  const decodedJson = atob(data.data);
+                  resultData = JSON.parse(decodedJson);
+                }
+                setResults(resultData);
+                setState('complete');
+              } else if (data.type === 'error') {
+                setError(data.error);
+                setState('error');
               }
-              setResults(resultData);
-              setState('complete');
-            } else if (data.type === 'error') {
-              setError(data.error);
-              setState('error');
+            } catch (parseError) {
+              console.error('Failed to parse SSE line:', line, parseError);
             }
           }
         }
