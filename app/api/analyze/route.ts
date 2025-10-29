@@ -1,5 +1,19 @@
 import { NextRequest } from 'next/server';
 
+// Helper function to escape text for safe JSON inclusion
+function escapeForJson(text: any): string {
+  if (text === null || text === undefined) return '';
+  const str = String(text);
+  // Replace control characters and quotes that could break JSON
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, ' ')
+    .replace(/\r/g, '')
+    .replace(/\t/g, ' ')
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+}
+
 // Import analyzer modules
 // Note: These are CommonJS modules, so we'll need to use dynamic imports
 async function runAnalysis(url: string, keyword: string, sendProgress: (message: string, step: string) => void) {
@@ -151,14 +165,14 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           }
 
           if (g.overviewText) {
-            resultText += `\n**AI Response:**\n> ${g.overviewText}\n`;
+            resultText += `\n**AI Response:**\n> ${escapeForJson(g.overviewText)}\n`;
           }
 
           if (g.citations && g.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, g.citations.length);
             g.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${cite}\n`;
+              resultText += `${idx + 1}. ${escapeForJson(cite)}\n`;
             });
             if (g.citations.length > maxCitations) {
               resultText += `...and ${g.citations.length - maxCitations} more\n`;
@@ -177,14 +191,14 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           }
 
           if (p.response) {
-            resultText += `\n**AI Response:**\n> ${p.response}\n`;
+            resultText += `\n**AI Response:**\n> ${escapeForJson(p.response)}\n`;
           }
 
           if (p.citations && p.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, p.citations.length);
             p.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${cite}\n`;
+              resultText += `${idx + 1}. ${escapeForJson(cite)}\n`;
             });
             if (p.citations.length > maxCitations) {
               resultText += `...and ${p.citations.length - maxCitations} more\n`;
@@ -203,14 +217,14 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           }
 
           if (c.response) {
-            resultText += `\n**AI Response:**\n> ${c.response}\n`;
+            resultText += `\n**AI Response:**\n> ${escapeForJson(c.response)}\n`;
           }
 
           if (c.citations && c.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, c.citations.length);
             c.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${cite}\n`;
+              resultText += `${idx + 1}. ${escapeForJson(cite)}\n`;
             });
             if (c.citations.length > maxCitations) {
               resultText += `...and ${c.citations.length - maxCitations} more\n`;
@@ -337,7 +351,7 @@ Tested across ${totalQueries} AI engine queries. ${totalCitations} citation${tot
 
 ### Tested Prompts
 ${keywordExpansion.map((k: any, i: number) =>
-  `${i + 1}. "${k.prompt}" *(${k.intent}, ${k.type})*`
+  `${i + 1}. "${escapeForJson(k.prompt)}" *(${k.intent}, ${k.type})*`
 ).join('\n')}
 
 ---
