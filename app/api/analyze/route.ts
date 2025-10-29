@@ -458,7 +458,7 @@ ${overallScore >= 70
     // Return a minimal markdown report on error
     return {
       analysis,
-      markdown: `# AI Search Readiness Report Card\n\n**URL:** ${url}\n**Keyword:** ${keyword}\n\n## Overall Score: 0/100\n\nAnalysis completed with limited data.\n\n### AI Visibility: ${aiVisibility?.visibility?.score || 0}/100\n### Entity Density: ${entities?.entities?.semanticScore?.entityDensity || 0}/100`,
+      markdown: `# AI Search Readiness Report Card\n\n**URL:** ${url}\n**Keyword:** ${keyword}\n\n## Overall Score: 0/100\n\nAnalysis completed with limited data.\n\n### AI Visibility: ${(aiVisibility as any)?.visibility?.score || 0}/100\n### Entity Density: ${(entities as any)?.entities?.semanticScore?.entityDensity || 0}/100`,
     };
   }
 }
