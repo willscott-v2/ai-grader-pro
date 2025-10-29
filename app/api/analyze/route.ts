@@ -429,9 +429,8 @@ ${schemaTypes.length > 0 ? `**Detected schema types:** ${schemaTypes.join(', ')}
 
 ${schemaRecommendations.length > 0 ? `### 📋 Schema Recommendations
 
-${schemaRecommendations.map((rec: string, i: number) => {
-  const priority = schemaScore < 30 ? 'HIGH' : schemaScore < 60 ? 'MEDIUM' : 'LOW';
-  return `${i + 1}. **${rec}** (${priority} Priority)`;
+${schemaRecommendations.map((rec: any, i: number) => {
+  return `${i + 1}. **${rec.type || 'Schema'}**: ${rec.reason || rec.toString()} (${rec.priority || 'MEDIUM'} Priority)`;
 }).join('\n\n')}` : ''}
 
 ---
