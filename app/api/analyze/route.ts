@@ -32,7 +32,7 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
 
   // Step 2: Expand keyword
   sendProgress('Generating AI-ready search prompts...', '2/3');
-  const location = entities.entities?.location || entities.pageData?.location || null;
+  const location = (entities as any).entities?.location || (entities as any).pageData?.location || null;
   let keywordExpansion;
   try {
     keywordExpansion = await expandKeyword(keyword, 5, location);
