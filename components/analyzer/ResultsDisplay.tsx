@@ -304,12 +304,16 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
             <p className="text-sm font-medium text-gray-700 mb-2">📋 Schema Recommendations:</p>
             <ul className="space-y-2">
               {schemaAnalysis.recommendations.map((rec: any, i: number) => {
-                const recText = typeof rec === 'string' ? rec : rec.recommendation || rec.text || JSON.stringify(rec);
+                // Handle both string and object formats
+                const recType = typeof rec === 'string' ? 'Schema' : (rec.type || 'Schema');
+                const recReason = typeof rec === 'string' ? rec : (rec.reason || rec.recommendation || rec.text || 'No details provided');
+                const recPriority = typeof rec === 'string' ? 'MEDIUM' : (rec.priority || 'MEDIUM');
+
                 return (
                   <li key={i} className="text-sm text-gray-700">
-                    {i + 1}. <strong>{recText}</strong>
+                    {i + 1}. <strong>{recType}</strong>: {recReason}
                     <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
-                      {(schemaAnalysis.score || 0) < 30 ? 'HIGH' : (schemaAnalysis.score || 0) < 60 ? 'MEDIUM' : 'LOW'} Priority
+                      {recPriority} Priority
                     </span>
                   </li>
                 );
