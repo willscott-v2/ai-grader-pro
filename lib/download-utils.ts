@@ -26,6 +26,13 @@ export function downloadFile(content: string, filename: string, mimeType: string
 export function downloadMarkdown(markdownContent: string, url: string) {
   const domain = extractDomain(url);
   const filename = `report-card-${domain}.md`;
+
+  // Debug: Check what we received
+  console.log('Markdown content length:', markdownContent.length);
+  console.log('First 200 chars:', markdownContent.substring(0, 200));
+  console.log('Has actual newlines:', markdownContent.includes('\n'));
+  console.log('Has escaped newlines:', markdownContent.includes('\\n'));
+
   // Ensure newlines are actual line breaks (LF) not escaped sequences
   const normalizedContent = markdownContent.replace(/\\n/g, '\n');
   downloadFile(normalizedContent, filename, 'text/markdown');
