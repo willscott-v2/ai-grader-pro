@@ -9,11 +9,11 @@ function safeString(text: any): string {
 // Helper to sanitize markdown for safe JSON stringification
 function sanitizeMarkdown(markdown: string): string {
   if (!markdown) return '';
-  // Remove or replace characters that commonly break JSON
+  // Remove or replace characters that commonly break JSON, but preserve newlines and tabs
   return markdown
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
-    .replace(/\u2028/g, ' ') // Replace line separator
-    .replace(/\u2029/g, ' '); // Replace paragraph separator
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '') // Remove control characters except \n (0A) and \t (09)
+    .replace(/\u2028/g, '\n') // Replace line separator with newline
+    .replace(/\u2029/g, '\n\n'); // Replace paragraph separator with double newline
 }
 
 // Import analyzer modules
@@ -519,9 +519,12 @@ export async function POST(request: NextRequest) {
 
           // Send the final result with Base64-encoded entire result to avoid ALL JSON escaping issues
           console.log(`[API] Encoding result (markdown length: ${result.markdown?.length || 0} chars)`);
+          console.log(`[API] Markdown has newlines before stringify:`, result.markdown?.includes('\n'));
+          console.log(`[API] First 200 chars of markdown:`, result.markdown?.substring(0, 200));
 
           // Base64 encode the ENTIRE result object to avoid any JSON escaping issues
           const resultJson = JSON.stringify(result);
+          console.log(`[API] After stringify, checking for escaped newlines:`, resultJson.includes('\\n'));
           const resultBase64 = Buffer.from(resultJson).toString('base64');
 
           const data = JSON.stringify({
