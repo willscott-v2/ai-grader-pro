@@ -26,7 +26,9 @@ export function downloadFile(content: string, filename: string, mimeType: string
 export function downloadMarkdown(markdownContent: string, url: string) {
   const domain = extractDomain(url);
   const filename = `report-card-${domain}.md`;
-  downloadFile(markdownContent, filename, 'text/markdown');
+  // Ensure newlines are actual line breaks (LF) not escaped sequences
+  const normalizedContent = markdownContent.replace(/\\n/g, '\n');
+  downloadFile(normalizedContent, filename, 'text/markdown');
 }
 
 export function downloadJSON(jsonData: any, url: string) {
