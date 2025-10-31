@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 interface AnalyzerFormProps {
-  onSubmit: (url: string, keyword: string) => void;
+  onSubmit: (url: string, keyword: string, schemaOnly: boolean) => void;
   isAnalyzing: boolean;
 }
 
@@ -11,6 +11,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
   const [url, setUrl] = useState('');
   const [keyword, setKeyword] = useState('');
   const [urlError, setUrlError] = useState('');
+  const [schemaOnly, setSchemaOnly] = useState(false);
 
   const validateUrl = (value: string) => {
     if (!value) {
@@ -29,9 +30,9 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateUrl(url) && keyword.trim()) {
-      onSubmit(url, keyword);
-    }
+    if (!validateUrl(url)) return;
+    if (!schemaOnly && !keyword.trim()) return;
+    onSubmit(url, keyword, schemaOnly);
   };
 
   return (
@@ -69,20 +70,50 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Nursing Program"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          disabled={isAnalyzing}
-          required
+          disabled={isAnalyzing || schemaOnly}
+          required={!schemaOnly}
         />
         <p className="mt-2 text-sm text-gray-500">
           Enter the main keyword or phrase you want this page to rank for
         </p>
       </div>
 
+      {/* Analysis Mode */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <p className="text-sm font-medium text-gray-700 mb-2">Analysis Mode</p>
+        <div className="flex items-center gap-6 text-sm">
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="mode"
+              checked={!schemaOnly}
+              onChange={() => setSchemaOnly(false)}
+              disabled={isAnalyzing}
+            />
+            <span>Full Analysis</span>
+          </label>
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="mode"
+              checked={schemaOnly}
+              onChange={() => setSchemaOnly(true)}
+              disabled={isAnalyzing}
+            />
+            <span>Schema Only</span>
+          </label>
+        </div>
+        {schemaOnly && (
+          <p className="mt-2 text-xs text-gray-500">Skips AI engines and keyword expansion. Fast structured data check.</p>
+        )}
+      </div>
+
       <button
         type="submit"
-        disabled={isAnalyzing || !url || !keyword || !!urlError}
+        disabled={isAnalyzing || !url || (!!urlError) || (!schemaOnly && !keyword)}
         className="w-full py-3 px-6 text-white font-medium rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
       >
-        {isAnalyzing ? 'Analyzing...' : 'Analyze Page'}
+        {isAnalyzing ? 'Analyzing...' : (schemaOnly ? 'Run Schema Check' : 'Analyze Page')}
       </button>
     </form>
   );

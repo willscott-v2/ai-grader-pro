@@ -13,16 +13,16 @@ export default function Home() {
   const [results, setResults] = useState<any>(null);
   const [error, setError] = useState('');
 
-  const handleAnalyze = async (url: string, keyword: string) => {
+  const handleAnalyze = async (url: string, keyword: string, schemaOnly: boolean) => {
     setState('analyzing');
     setError('');
-    setProgress({ step: '0/3', message: 'Starting analysis...' });
+    setProgress({ step: schemaOnly ? 'schema' : '0/3', message: schemaOnly ? 'Extracting structured data (JSON-LD)...' : 'Starting analysis...' });
 
     try {
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, keyword }),
+        body: JSON.stringify({ url, keyword, schemaOnly }),
       });
 
       if (!response.ok) {

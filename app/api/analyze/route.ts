@@ -24,6 +24,10 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
   const { expandKeyword } = await import('@/lib/analyzer/keyword-expander.js');
   const { checkAIVisibility } = await import('@/lib/analyzer/ai-visibility-checker.js');
   const { generateReportCard, exportReportCardMarkdown } = await import('@/lib/analyzer/report-generators.js');
+  const { costTracker } = await import('@/lib/analyzer/cost-tracker.js');
+
+  // Reset cost tracker for new analysis
+  costTracker.reset();
 
   // Validate URL
   try {
@@ -187,8 +191,9 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           if (g.citations && g.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, g.citations.length);
-            g.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${safeString(cite)}\n`;
+            g.citations.slice(0, maxCitations).forEach((cite: any, idx: number) => {
+              const url = typeof cite === 'object' && cite !== null ? cite.url : cite;
+              resultText += `${idx + 1}. ${safeString(url)}\n`;
             });
             if (g.citations.length > maxCitations) {
               resultText += `...and ${g.citations.length - maxCitations} more\n`;
@@ -213,8 +218,9 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           if (p.citations && p.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, p.citations.length);
-            p.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${safeString(cite)}\n`;
+            p.citations.slice(0, maxCitations).forEach((cite: any, idx: number) => {
+              const url = typeof cite === 'object' && cite !== null ? cite.url : cite;
+              resultText += `${idx + 1}. ${safeString(url)}\n`;
             });
             if (p.citations.length > maxCitations) {
               resultText += `...and ${p.citations.length - maxCitations} more\n`;
@@ -239,8 +245,9 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
           if (c.citations && c.citations.length > 0) {
             resultText += `\n**Citations:**\n`;
             const maxCitations = Math.min(5, c.citations.length);
-            c.citations.slice(0, maxCitations).forEach((cite: string, idx: number) => {
-              resultText += `${idx + 1}. ${safeString(cite)}\n`;
+            c.citations.slice(0, maxCitations).forEach((cite: any, idx: number) => {
+              const url = typeof cite === 'object' && cite !== null ? cite.url : cite;
+              resultText += `${idx + 1}. ${safeString(url)}\n`;
             });
             if (c.citations.length > maxCitations) {
               resultText += `...and ${c.citations.length - maxCitations} more\n`;
@@ -254,11 +261,13 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
     }
 
     // Schema markup analysis
-    const schemaScore = schemaAnalysis.score || 0;
-    const schemaTypes = schemaAnalysis.types || [];
-    const schemaRecommendations = schemaAnalysis.recommendations || [];
+    const sa: any = schemaAnalysis || {};
+    const schemaScore = sa.schemaScore ?? sa.score ?? 0;
+    const schemaTypes = (sa.schemasPresent || sa.types || [])
+      .map((t: any) => (typeof t === 'string' ? t : t.type));
+    const schemaRecommendations = sa.recommendations || [];
 
-    const schemaTypesText = schemaTypes.length > 0
+    const schemaTypesText = schemaTypes && schemaTypes.length > 0
       ? schemaTypes.map((type: string) => `- ${type}`).join('\n')
       : '- None detected';
 
@@ -335,7 +344,7 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
 
     const markdown = `# AI Search Readiness Report Card
 
-**Institution:** ${institutionName}
+**Brand:** ${institutionName}
 **Location:** ${locationText}
 **URL:** ${url}
 **Target Keyword:** ${keyword}
@@ -494,11 +503,11 @@ ${overallScore >= 70
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, keyword } = await request.json();
+    const { url, keyword, schemaOnly } = await request.json();
 
-    if (!url || !keyword) {
+    if (!url || (!keyword && !schemaOnly)) {
       return new Response(
-        JSON.stringify({ error: 'URL and keyword are required' }),
+        JSON.stringify({ error: 'URL and keyword are required (omit keyword only when schemaOnly=true)' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -513,18 +522,51 @@ export async function POST(request: NextRequest) {
         };
 
         try {
-          // Run the analysis with progress updates
-          const result = await runAnalysis(url, keyword, sendProgress);
-          console.log(`[API] Analysis completed successfully, preparing response`);
+          // Schema-only fast path (skip AI engine + keyword steps)
+          if (schemaOnly) {
+            const { fetchAndAnalyzeSchemas } = await import('@/lib/analyzer/entity-discovery.js');
+            sendProgress('Extracting structured data (JSON-LD)...', 'schema');
+            const schemaResult = await fetchAndAnalyzeSchemas(url);
 
-          // Send the final result with Base64-encoded entire result to avoid ALL JSON escaping issues
-          console.log(`[API] Encoding result (markdown length: ${result.markdown?.length || 0} chars)`);
-          console.log(`[API] Markdown has newlines before stringify:`, result.markdown?.includes('\n'));
-          console.log(`[API] First 200 chars of markdown:`, result.markdown?.substring(0, 200));
+            const sa: any = schemaResult.schemaAnalysis || {};
+            const payload = {
+              analysis: {
+                url,
+                schemaOnly: true,
+                entities: undefined,
+              },
+              jsonLd: schemaResult.jsonLd || [],
+              schemaAnalysis: sa,
+              pageData: schemaResult.pageData || {},
+              markdown: `## 🏗️ Schema Markup Analysis (Schema Only)\n\n` +
+                `**URL:** ${url}\n\n` +
+                `- Detected: ${sa.hasSchema ? 'Yes' : 'No'}\n` +
+                `- Types: ${(sa.schemasPresent || []).map((s: any) => s.type).join(', ') || 'None'}\n` +
+                `- Score: ${sa.schemaScore || 0}/100\n` +
+                (sa.recommendations?.length ? (`\n### Recommendations\n` + sa.recommendations.map((r: any, i: number) => `${i + 1}. [${r.priority}] ${r.type} - ${r.reason}`).join('\n')) : ''),
+            } as any;
+
+            const resultBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
+            const data = JSON.stringify({ type: 'result', data: resultBase64, encoded: true });
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+            controller.close();
+            return;
+          }
+
+          // Run the full analysis with progress updates
+          const result = await runAnalysis(url, keyword, sendProgress);
+          if (process.env.ANALYZER_DEBUG === '1') {
+            console.log(`[API] Analysis completed successfully, preparing response`);
+            console.log(`[API] Encoding result (markdown length: ${result.markdown?.length || 0} chars)`);
+            console.log(`[API] Markdown has newlines before stringify:`, result.markdown?.includes('\n'));
+            console.log(`[API] First 200 chars of markdown:`, result.markdown?.substring(0, 200));
+          }
 
           // Base64 encode the ENTIRE result object to avoid any JSON escaping issues
           const resultJson = JSON.stringify(result);
-          console.log(`[API] After stringify, checking for escaped newlines:`, resultJson.includes('\\n'));
+          if (process.env.ANALYZER_DEBUG === '1') {
+            console.log(`[API] After stringify, checking for escaped newlines:`, resultJson.includes('\\n'));
+          }
           const resultBase64 = Buffer.from(resultJson).toString('base64');
 
           const data = JSON.stringify({
@@ -533,7 +575,9 @@ export async function POST(request: NextRequest) {
             encoded: true // Signal to client that data is base64 encoded
           });
           controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          console.log(`[API] Result sent successfully (base64 encoded, ${resultBase64.length} chars)`)
+          if (process.env.ANALYZER_DEBUG === '1') {
+            console.log(`[API] Result sent successfully (base64 encoded, ${resultBase64.length} chars)`)
+          }
 
           controller.close();
         } catch (error: any) {

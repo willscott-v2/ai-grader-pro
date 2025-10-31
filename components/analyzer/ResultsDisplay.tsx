@@ -21,6 +21,88 @@ function getGradeScore(score: number): { grade: string; color: string; bgColor: 
 export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDisplayProps) {
   const { analysis, markdown } = data;
 
+  // Schema-only view: just show schema analysis section and basic header
+  if (analysis?.schemaOnly) {
+    const schemaAnalysis = (data as any).schemaAnalysis || {};
+    const pageData = (data as any).pageData || {};
+    const jsonLd = (data as any).jsonLd || [];
+
+    return (
+      <div className="w-full max-w-6xl space-y-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-gray-600">Brand:</span>
+              <span className="ml-2 text-gray-900">{pageData.organizationName || 'Unknown'}</span>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">URL:</span>
+              <span className="ml-2 text-gray-900">{analysis.url}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">🏗️ Schema Markup Analysis</h3>
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 mb-1">Schema Score</p>
+            <p className="text-3xl font-bold text-blue-600">{schemaAnalysis.schemaScore || schemaAnalysis.score || 0}/100</p>
+            <p className="text-sm text-gray-600 mt-2">Detected: {(schemaAnalysis.hasSchema || (jsonLd.length > 0)) ? 'Yes' : 'No'} ({jsonLd.length} objects)</p>
+          </div>
+
+          {schemaAnalysis.schemasPresent && schemaAnalysis.schemasPresent.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Detected Schema Types:</p>
+              <div className="flex flex-wrap gap-2">
+                {schemaAnalysis.schemasPresent.map((t: any, i: number) => (
+                  <span key={i} className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm">
+                    {typeof t === 'string' ? t : t.type}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {schemaAnalysis.recommendations && schemaAnalysis.recommendations.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">📋 Schema Recommendations:</p>
+              <ul className="space-y-2">
+                {schemaAnalysis.recommendations.map((rec: any, i: number) => (
+                  <li key={i} className="text-sm text-gray-700">
+                    {i + 1}. <strong>{rec.type || 'Schema'}</strong>: {rec.reason || rec}
+                    <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">{rec.priority || 'MEDIUM'} Priority</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            onClick={() => downloadMarkdown(markdown, analysis.url)}
+            className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            📄 Download Schema Report (.md)
+          </button>
+          <button
+            onClick={() => downloadJSON(data, analysis.url)}
+            className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+          >
+            💾 Download Raw Data (.json)
+          </button>
+        </div>
+
+        <button
+          onClick={onAnalyzeAnother}
+          className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+        >
+          🔄 Analyze Another Page
+        </button>
+      </div>
+    );
+  }
+
   const aiVisibility = analysis.aiVisibility?.visibility?.score || 0;
   const entityDensity = analysis.entities?.entities?.semanticScore?.entityDensity || 0;
   const topicCoverage = analysis.entities?.entities?.semanticScore?.topicCoverage || 0;
@@ -36,6 +118,9 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
   const domainMentionRate = analysis.aiVisibility?.visibility?.domainMentionRate || 0;
   const averagePosition = analysis.aiVisibility?.visibility?.averagePosition;
   const schemaAnalysis = analysis.entities?.entities?.schemaAnalysis || {};
+  const schemaScore = schemaAnalysis.schemaScore ?? schemaAnalysis.score ?? 0;
+  const schemaTypes: string[] = (schemaAnalysis.schemasPresent || schemaAnalysis.types || [])
+    .map((t: any) => (typeof t === 'string' ? t : t.type));
   const eeatSignals = analysis.entities?.entities?.eeatSignals || {};
   const missingEntities = analysis.entities?.entities?.missingEntities || [];
   const promptResults = analysis.aiVisibility?.promptResults || [];
@@ -60,11 +145,11 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
   return (
     <div className="w-full max-w-6xl space-y-6">
-      {/* Institution Header */}
+      {/* Brand Header */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="font-medium text-gray-600">Institution:</span>
+            <span className="font-medium text-gray-600">Brand:</span>
             <span className="ml-2 text-gray-900">{pageData.organizationName || 'Unknown'}</span>
           </div>
           <div>
@@ -281,14 +366,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
         <h3 className="text-xl font-bold text-gray-900 mb-4">🏗️ Schema Markup Analysis</h3>
         <div className="mb-4">
           <p className="text-sm text-gray-600 mb-1">Schema Score</p>
-          <p className="text-3xl font-bold text-blue-600">{schemaAnalysis.score || 0}/100</p>
+          <p className="text-3xl font-bold text-blue-600">{schemaScore}/100</p>
         </div>
 
-        {schemaAnalysis.types && schemaAnalysis.types.length > 0 ? (
+        {schemaTypes && schemaTypes.length > 0 ? (
           <div className="mb-4">
             <p className="text-sm font-medium text-gray-700 mb-2">Detected Schema Types:</p>
             <div className="flex flex-wrap gap-2">
-              {schemaAnalysis.types.map((type: string, i: number) => (
+              {schemaTypes.map((type: string, i: number) => (
                 <span key={i} className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm">
                   {type}
                 </span>
@@ -346,7 +431,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <p>
                           <strong>Cited:</strong>{' '}
                           {result.checks.googleAIOverview.cited ? (
-                            <span className="text-green-600">✅ Yes (Position #{result.checks.googleAIOverview.position})</span>
+                            <span className="text-green-600">
+                              ✅ Yes (Position #{result.checks.googleAIOverview.position})
+                              {result.checks.googleAIOverview.matchType && (
+                                <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${result.checks.googleAIOverview.matchType === 'exact' ? 'bg-green-100 text-green-800' : result.checks.googleAIOverview.matchType === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700'}`}>
+                                  {result.checks.googleAIOverview.matchType === 'exact' ? 'Exact' : result.checks.googleAIOverview.matchType === 'partial' ? 'Partial' : 'None'}
+                                </span>
+                              )}
+                            </span>
                           ) : (
                             <span className="text-red-600">❌ No</span>
                           )}
@@ -373,9 +465,21 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
                           <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
-                            {result.checks.googleAIOverview.citations.slice(0, 3).map((cite: string, idx: number) => (
-                              <li key={idx} className="truncate">{cite}</li>
-                            ))}
+                            {result.checks.googleAIOverview.citations.slice(0, 3).map((cite: any, idx: number) => {
+                              const isObj = typeof cite === 'object' && cite !== null;
+                              const url = isObj ? (cite.url || '') : cite;
+                              const match = isObj ? cite.match : undefined;
+                              const badge = match === 'exact' ? 'bg-green-100 text-green-800' : match === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700';
+                              const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
+                              return (
+                                <li key={idx} className="truncate">
+                                  <span className="truncate inline-block max-w-full align-middle">{url}</span>
+                                  {label && (
+                                    <span className={`ml-2 inline-block px-2 py-0.5 rounded ${badge}`}>{label}</span>
+                                  )}
+                                </li>
+                              );
+                            })}
                             {result.checks.googleAIOverview.citations.length > 3 && (
                               <li className="italic">...and {result.checks.googleAIOverview.citations.length - 3} more</li>
                             )}
@@ -393,7 +497,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <p>
                           <strong>Cited:</strong>{' '}
                           {result.checks.perplexity.cited ? (
-                            <span className="text-green-600">✅ Yes (Position #{result.checks.perplexity.position})</span>
+                            <span className="text-green-600">
+                              ✅ Yes (Position #{result.checks.perplexity.position})
+                              {result.checks.perplexity.matchType && (
+                                <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${result.checks.perplexity.matchType === 'exact' ? 'bg-green-100 text-green-800' : result.checks.perplexity.matchType === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700'}`}>
+                                  {result.checks.perplexity.matchType === 'exact' ? 'Exact' : result.checks.perplexity.matchType === 'partial' ? 'Partial' : 'None'}
+                                </span>
+                              )}
+                            </span>
                           ) : (
                             <span className="text-red-600">❌ No</span>
                           )}
@@ -417,9 +528,21 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
                           <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
-                            {result.checks.perplexity.citations.slice(0, 3).map((cite: string, idx: number) => (
-                              <li key={idx} className="truncate">{cite}</li>
-                            ))}
+                            {result.checks.perplexity.citations.slice(0, 3).map((cite: any, idx: number) => {
+                              const isObj = typeof cite === 'object' && cite !== null;
+                              const url = isObj ? (cite.url || '') : cite;
+                              const match = isObj ? cite.match : undefined;
+                              const badge = match === 'exact' ? 'bg-green-100 text-green-800' : match === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700';
+                              const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
+                              return (
+                                <li key={idx} className="truncate">
+                                  <span className="truncate inline-block max-w-full align-middle">{url}</span>
+                                  {label && (
+                                    <span className={`ml-2 inline-block px-2 py-0.5 rounded ${badge}`}>{label}</span>
+                                  )}
+                                </li>
+                              );
+                            })}
                             {result.checks.perplexity.citations.length > 3 && (
                               <li className="italic">...and {result.checks.perplexity.citations.length - 3} more</li>
                             )}
@@ -437,7 +560,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <p>
                           <strong>Cited:</strong>{' '}
                           {result.checks.chatgpt.cited ? (
-                            <span className="text-green-600">✅ Yes (Position #{result.checks.chatgpt.position})</span>
+                            <span className="text-green-600">
+                              ✅ Yes (Position #{result.checks.chatgpt.position})
+                              {result.checks.chatgpt.matchType && (
+                                <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${result.checks.chatgpt.matchType === 'exact' ? 'bg-green-100 text-green-800' : result.checks.chatgpt.matchType === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700'}`}>
+                                  {result.checks.chatgpt.matchType === 'exact' ? 'Exact' : result.checks.chatgpt.matchType === 'partial' ? 'Partial' : 'None'}
+                                </span>
+                              )}
+                            </span>
                           ) : (
                             <span className="text-red-600">❌ No</span>
                           )}
@@ -461,9 +591,21 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
                           <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
-                            {result.checks.chatgpt.citations.slice(0, 3).map((cite: string, idx: number) => (
-                              <li key={idx} className="truncate">{cite}</li>
-                            ))}
+                            {result.checks.chatgpt.citations.slice(0, 3).map((cite: any, idx: number) => {
+                              const isObj = typeof cite === 'object' && cite !== null;
+                              const url = isObj ? (cite.url || '') : cite;
+                              const match = isObj ? cite.match : undefined;
+                              const badge = match === 'exact' ? 'bg-green-100 text-green-800' : match === 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700';
+                              const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
+                              return (
+                                <li key={idx} className="truncate">
+                                  <span className="truncate inline-block max-w-full align-middle">{url}</span>
+                                  {label && (
+                                    <span className={`ml-2 inline-block px-2 py-0.5 rounded ${badge}`}>{label}</span>
+                                  )}
+                                </li>
+                              );
+                            })}
                             {result.checks.chatgpt.citations.length > 3 && (
                               <li className="italic">...and {result.checks.chatgpt.citations.length - 3} more</li>
                             )}
