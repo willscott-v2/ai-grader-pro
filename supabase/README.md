@@ -61,7 +61,23 @@ SELECT * FROM sync_domain_whitelist();
 
 **How it works:** Anyone who signs up with an email from a whitelisted domain is automatically approved. Perfect for company domains like `@yourcompany.com`.
 
-📖 **See:** `DOMAIN_MANAGEMENT.md` for complete domain management guide.
+**Managing whitelisted domains:**
+```sql
+-- List all whitelisted domains
+SELECT * FROM whitelisted_domains WHERE is_active = true;
+
+-- Add a new domain
+INSERT INTO whitelisted_domains (domain, description)
+VALUES ('newdomain.com', 'New partner domain');
+
+-- Deactivate a domain (without deleting)
+UPDATE whitelisted_domains
+SET is_active = false
+WHERE domain = 'olddomain.com';
+
+-- Sync existing users after adding a domain
+SELECT * FROM sync_domain_whitelist();
+```
 
 **Option B: Manual User Whitelist**
 
