@@ -62,21 +62,23 @@ export async function middleware(request: NextRequest) {
   // Refresh session if expired - required for Server Components
   const { data: { session } } = await supabase.auth.getSession();
 
-  // Protected routes - redirect to login if not authenticated
-  const protectedPaths = ['/dashboard', '/runs', '/new'];
-  const isProtectedPath = protectedPaths.some(path =>
+  // Public paths that don't require authentication
+  const publicPaths = ['/auth/login', '/auth/callback'];
+  const isPublicPath = publicPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   );
 
-  if (isProtectedPath && !session) {
+  // All paths except public paths require authentication
+  if (!isPublicPath && !session) {
     const redirectUrl = new URL('/auth/login', request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Redirect to dashboard if already logged in and trying to access auth pages
+  // Redirect to homepage if already logged in and trying to access auth pages
   if (request.nextUrl.pathname.startsWith('/auth/login') && session) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/';
+    return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 
   return response;
