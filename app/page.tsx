@@ -5,7 +5,6 @@ import AnalyzerForm from '@/components/analyzer/AnalyzerForm';
 import ProgressDisplay from '@/components/analyzer/ProgressDisplay';
 import ResultsDisplay from '@/components/analyzer/ResultsDisplay';
 import ThemeToggle from '@/components/ui/ThemeToggle';
-import UserMenu from '@/components/ui/UserMenu';
 
 type AppState = 'idle' | 'analyzing' | 'complete' | 'error';
 
@@ -95,12 +94,9 @@ export default function Home() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-between max-w-6xl mx-auto mb-6">
+          <div className="flex items-center justify-between max-w-3xl mx-auto">
             <div />
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <UserMenu />
-            </div>
+            <ThemeToggle />
           </div>
           <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             AI Grader Pro
