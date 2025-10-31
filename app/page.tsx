@@ -4,6 +4,7 @@ import { useState } from 'react';
 import AnalyzerForm from '@/components/analyzer/AnalyzerForm';
 import ProgressDisplay from '@/components/analyzer/ProgressDisplay';
 import ResultsDisplay from '@/components/analyzer/ResultsDisplay';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 type AppState = 'idle' | 'analyzing' | 'complete' | 'error';
 
@@ -89,14 +90,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <div className="flex items-center justify-between max-w-3xl mx-auto">
+            <div />
+            <ThemeToggle />
+          </div>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             AI Grader Pro
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Analyze how well your webpages perform in AI-powered search results.
             Get instant visibility scores and actionable recommendations.
           </p>
@@ -122,14 +127,14 @@ export default function Home() {
 
           {/* Error message */}
           {state === 'error' && (
-            <div className="w-full max-w-3xl p-6 bg-red-50 border border-red-200 rounded-lg">
+            <div className="w-full max-w-3xl p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
               <div className="flex items-center space-x-3">
                 <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="text-lg font-semibold text-red-900">Analysis Failed</h3>
-                  <p className="text-red-700">{error}</p>
+                  <h3 className="text-lg font-semibold text-red-900 dark:text-red-300">Analysis Failed</h3>
+                  <p className="text-red-700 dark:text-red-400">{error}</p>
                 </div>
               </div>
               <button
@@ -151,7 +156,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="mt-16 text-center text-gray-500 text-sm">
+        <div className="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm">
           <p>
             Powered by Claude AI, Perplexity, and Google AI Overviews
           </p>

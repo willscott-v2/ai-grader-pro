@@ -29,30 +29,30 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
     return (
       <div className="w-full max-w-6xl space-y-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="font-medium text-gray-600">Brand:</span>
-              <span className="ml-2 text-gray-900">{pageData.organizationName || 'Unknown'}</span>
+              <span className="font-medium text-gray-600 dark:text-gray-400">Brand:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">{pageData.organizationName || 'Unknown'}</span>
             </div>
             <div>
-              <span className="font-medium text-gray-600">URL:</span>
-              <span className="ml-2 text-gray-900">{analysis.url}</span>
+              <span className="font-medium text-gray-600 dark:text-gray-400">URL:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">{analysis.url}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">🏗️ Schema Markup Analysis</h3>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🏗️ Schema Markup Analysis</h3>
           <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-1">Schema Score</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Schema Score</p>
             <p className="text-3xl font-bold text-blue-600">{schemaAnalysis.schemaScore || schemaAnalysis.score || 0}/100</p>
-            <p className="text-sm text-gray-600 mt-2">Detected: {(schemaAnalysis.hasSchema || (jsonLd.length > 0)) ? 'Yes' : 'No'} ({jsonLd.length} objects)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Detected: {(schemaAnalysis.hasSchema || (jsonLd.length > 0)) ? 'Yes' : 'No'} ({jsonLd.length} objects)</p>
           </div>
 
           {schemaAnalysis.schemasPresent && schemaAnalysis.schemasPresent.length > 0 && (
             <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">Detected Schema Types:</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Detected Schema Types:</p>
               <div className="flex flex-wrap gap-2">
                 {schemaAnalysis.schemasPresent.map((t: any, i: number) => (
                   <span key={i} className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm">
@@ -65,10 +65,10 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
           {schemaAnalysis.recommendations && schemaAnalysis.recommendations.length > 0 && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">📋 Schema Recommendations:</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">📋 Schema Recommendations:</p>
               <ul className="space-y-2">
                 {schemaAnalysis.recommendations.map((rec: any, i: number) => (
-                  <li key={i} className="text-sm text-gray-700">
+                  <li key={i} className="text-sm text-gray-700 dark:text-gray-200">
                     {i + 1}. <strong>{rec.type || 'Schema'}</strong>: {rec.reason || rec}
                     <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">{rec.priority || 'MEDIUM'} Priority</span>
                   </li>
@@ -144,17 +144,17 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
   }, {});
 
   return (
-    <div className="w-full max-w-6xl space-y-6">
+      <div className="w-full max-w-6xl space-y-6">
       {/* Brand Header */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="font-medium text-gray-600">Brand:</span>
-            <span className="ml-2 text-gray-900">{pageData.organizationName || 'Unknown'}</span>
+              <span className="font-medium text-gray-600 dark:text-gray-400">Brand:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">{pageData.organizationName || 'Unknown'}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-600">Location:</span>
-            <span className="ml-2 text-gray-900">
+              <span className="font-medium text-gray-600 dark:text-gray-400">Location:</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">
               {location?.city && location?.state
                 ? `${location.city}, ${location.state}`
                 : location?.state || 'Unknown'}
@@ -164,36 +164,36 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Overall Grade Card */}
-      <div className={`${gradeInfo.bgColor} border-2 border-gray-300 rounded-lg p-8 text-center`}>
+      <div className={`${gradeInfo.bgColor} dark:bg-opacity-20 border-2 border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center`}>
         <h2 className="text-4xl font-bold mb-2">
-          <span className={gradeInfo.color}>Grade: {gradeInfo.grade}</span>
+          <span className={`${gradeInfo.color} dark:text-green-300`}>Grade: {gradeInfo.grade}</span>
         </h2>
-        <p className="text-2xl font-semibold text-gray-700">{overallScore}/100</p>
+        <p className="text-2xl font-semibold text-gray-700 dark:text-gray-200">{overallScore}/100</p>
         <p className="text-lg mt-2">
           {gradeInfo.emoji} <span className="font-medium">{gradeInfo.label}</span>
         </p>
-        <p className="text-sm text-gray-600 mt-4">{analysis.url}</p>
-        <p className="text-sm text-gray-600">Keyword: <strong>{analysis.keyword}</strong></p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">{analysis.url}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Keyword: <strong className="text-gray-800 dark:text-gray-200">{analysis.keyword}</strong></p>
       </div>
 
       {/* AI Visibility Score */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">📊 AI Visibility Score: {aiVisibility}/100</h3>
-        <p className="text-sm text-gray-600 mb-4">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">📊 AI Visibility Score: {aiVisibility}/100</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Tested across {totalQueries} AI engine queries. {totalCitations} citation{totalCitations !== 1 ? 's' : ''} found with {citationRate}% citation rate.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600">Citation Rate</p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Citation Rate</p>
             <p className="text-2xl font-bold text-blue-600">{citationRate}%</p>
           </div>
-          <div className="bg-green-50 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600">Domain Mention Rate</p>
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Domain Mention Rate</p>
             <p className="text-2xl font-bold text-green-600">{domainMentionRate}%</p>
           </div>
-          <div className="bg-purple-50 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600">Average Position</p>
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Average Position</p>
             <p className="text-2xl font-bold text-purple-600">
               {averagePosition ? `#${averagePosition}` : 'Not cited'}
             </p>
@@ -201,11 +201,11 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
         </div>
 
         <div>
-          <h4 className="font-semibold text-gray-900 mb-2">Tested Prompts</h4>
-          <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700">
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Tested Prompts</h4>
+          <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700 dark:text-gray-200">
             {keywordExpansion.map((k: any, i: number) => (
               <li key={i}>
-                &ldquo;{k.prompt}&rdquo; <span className="italic text-gray-500">({k.intent}, {k.type})</span>
+                &ldquo;{k.prompt}&rdquo; <span className="italic text-gray-500 dark:text-gray-400">({k.intent}, {k.type})</span>
               </li>
             ))}
           </ol>
@@ -213,22 +213,22 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Keyword Expansion Analysis */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🔑 Keyword Expansion Analysis</h3>
-        <p className="text-sm text-gray-600 mb-4">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🔑 Keyword Expansion Analysis</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           <strong>Base Keyword:</strong> {analysis.keyword}
         </p>
 
-        <h4 className="font-semibold text-gray-900 mb-2">Generated Search Prompts ({keywordExpansion.length})</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Generated Search Prompts ({keywordExpansion.length})</h4>
         <div className="space-y-3 mb-4">
           {keywordExpansion.map((k: any, i: number) => (
             <div key={i} className="border-l-4 border-blue-500 pl-3 py-1">
-              <p className="font-medium text-gray-900">{i + 1}. {k.prompt}</p>
-              <p className="text-sm text-gray-600">
+              <p className="font-medium text-gray-900 dark:text-gray-100">{i + 1}. {k.prompt}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs mr-2">
                   Intent: {k.intent}
                 </span>
-                <span className="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                <span className="inline-block bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs">
                   Type: {k.type}
                 </span>
               </p>
@@ -237,10 +237,10 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
         </div>
 
         <div>
-          <h4 className="font-semibold text-gray-900 mb-2">Intent Distribution</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Intent Distribution</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(intentCounts).map(([intent, count]) => (
-              <span key={intent} className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">
+              <span key={intent} className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-1 rounded text-sm">
                 {intent}: {count as number}
               </span>
             ))}
@@ -249,95 +249,95 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Entity & Content Analysis */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🎯 Entity & Content Analysis</h3>
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🎯 Entity & Content Analysis</h3>
 
-        <div className="bg-gray-50 rounded-lg p-4 mb-4">
-          <p className="text-sm font-medium text-gray-600 mb-2">Semantic Score</p>
-          <p className="text-3xl font-bold text-gray-900">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Semantic Score</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             {Math.round((entityDensity + topicCoverage + eeatScore) / 3)}/100
           </p>
           <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
             <div>
-              <p className="text-gray-600">Entity Density</p>
+              <p className="text-gray-600 dark:text-gray-400">Entity Density</p>
               <p className="font-bold text-green-600">{entityDensity}/100</p>
             </div>
             <div>
-              <p className="text-gray-600">Topic Coverage</p>
+              <p className="text-gray-600 dark:text-gray-400">Topic Coverage</p>
               <p className="font-bold text-blue-600">{topicCoverage}/100</p>
             </div>
             <div>
-              <p className="text-gray-600">E-E-A-T Score</p>
+              <p className="text-gray-600 dark:text-gray-400">E-E-A-T Score</p>
               <p className="font-bold text-purple-600">{eeatScore}/100</p>
             </div>
           </div>
         </div>
 
-        <h4 className="font-semibold text-gray-900 mb-2">Named Entities ({namedEntities.length})</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Named Entities ({namedEntities.length})</h4>
         <ul className="space-y-2 mb-4">
           {namedEntities.length > 0 ? (
             namedEntities.map((e: any, i: number) => (
-              <li key={i} className="flex items-center justify-between py-2 border-b border-gray-100">
+              <li key={i} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
                 <span>
-                  <strong>{e.name || e.text}</strong> <span className="text-gray-500">({e.type})</span>
+                  <strong className="text-gray-900 dark:text-gray-100">{e.name || e.text}</strong> <span className="text-gray-500 dark:text-gray-400">({e.type})</span>
                 </span>
-                <span className="text-sm text-gray-600">{e.mentions} mention{e.mentions > 1 ? 's' : ''}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">{e.mentions} mention{e.mentions > 1 ? 's' : ''}</span>
               </li>
             ))
           ) : (
-            <li className="text-gray-500 italic">No entities identified</li>
+            <li className="text-gray-500 dark:text-gray-400 italic">No entities identified</li>
           )}
         </ul>
 
-        <h4 className="font-semibold text-gray-900 mb-2">Key Topics</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Key Topics</h4>
         <ul className="space-y-2 mb-4">
           {topics.length > 0 ? (
             topics.map((t: any, i: number) => (
               <li key={i} className="py-2 border-b border-gray-100">
-                <p className="font-medium text-gray-900">{t.topic}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-medium text-gray-900 dark:text-gray-100">{t.topic}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   <span className={`inline-block px-2 py-1 rounded text-xs mr-2 ${
                     t.relevance === 'high' ? 'bg-green-100 text-green-800' :
                     t.relevance === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-700'
+                    'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
                   }`}>{t.relevance} relevance</span>
-                  <span className="text-gray-500">{t.coverage} coverage</span>
+                  <span className="text-gray-500 dark:text-gray-400">{t.coverage} coverage</span>
                 </p>
               </li>
             ))
           ) : (
-            <li className="text-gray-500 italic">No topics identified</li>
+            <li className="text-gray-500 dark:text-gray-400 italic">No topics identified</li>
           )}
         </ul>
 
-        <h4 className="font-semibold text-gray-900 mb-2">E-E-A-T Signals</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">E-E-A-T Signals</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4 text-sm">
-          <div className="bg-blue-50 rounded p-2">
-            <p className="text-gray-600">Author Credentials</p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-2">
+            <p className="text-gray-600 dark:text-gray-400">Author Credentials</p>
             <p className="font-bold text-blue-600">
               {Array.isArray(eeatSignals.authorCredentials) ? eeatSignals.authorCredentials.length : 0} found
             </p>
           </div>
-          <div className="bg-green-50 rounded p-2">
-            <p className="text-gray-600">Accreditations</p>
+          <div className="bg-green-50 dark:bg-green-900/20 rounded p-2">
+            <p className="text-gray-600 dark:text-gray-400">Accreditations</p>
             <p className="font-bold text-green-600">
               {Array.isArray(eeatSignals.accreditation) ? eeatSignals.accreditation.length : 0} mentioned
             </p>
           </div>
-          <div className="bg-purple-50 rounded p-2">
-            <p className="text-gray-600">Statistics/Data</p>
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
+            <p className="text-gray-600 dark:text-gray-400">Statistics/Data</p>
             <p className="font-bold text-purple-600">
               {Array.isArray(eeatSignals.statistics) ? eeatSignals.statistics.length : 0} found
             </p>
           </div>
-          <div className="bg-yellow-50 rounded p-2">
-            <p className="text-gray-600">Expert Quotes</p>
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded p-2">
+            <p className="text-gray-600 dark:text-gray-400">Expert Quotes</p>
             <p className="font-bold text-yellow-600">
               {typeof eeatSignals.expertQuotes === 'number' ? eeatSignals.expertQuotes : 0}
             </p>
           </div>
-          <div className="bg-red-50 rounded p-2">
-            <p className="text-gray-600">Citations</p>
+          <div className="bg-red-50 dark:bg-red-900/20 rounded p-2">
+            <p className="text-gray-600 dark:text-gray-400">Citations</p>
             <p className="font-bold text-red-600">
               {typeof eeatSignals.citations === 'number' ? eeatSignals.citations : 0}
             </p>
@@ -346,14 +346,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
         {missingEntities.length > 0 && (
           <>
-            <h4 className="font-semibold text-gray-900 mb-2">⚠️ Missing Critical Entities</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">⚠️ Missing Critical Entities</h4>
             <ul className="space-y-2">
               {missingEntities.map((e: any, i: number) => (
                 <li key={i} className="text-sm">
-                  <strong className="text-gray-900">
+                  <strong className="text-gray-900 dark:text-gray-100">
                     {typeof e === 'string' ? e : e.entity || JSON.stringify(e)}
                   </strong>
-                  {e.reason && <span className="text-gray-600"> - {e.reason}</span>}
+                  {e.reason && <span className="text-gray-600 dark:text-gray-400"> - {e.reason}</span>}
                 </li>
               ))}
             </ul>
@@ -362,16 +362,16 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Schema Markup Analysis */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🏗️ Schema Markup Analysis</h3>
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🏗️ Schema Markup Analysis</h3>
         <div className="mb-4">
-          <p className="text-sm text-gray-600 mb-1">Schema Score</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Schema Score</p>
           <p className="text-3xl font-bold text-blue-600">{schemaScore}/100</p>
         </div>
 
         {schemaTypes && schemaTypes.length > 0 ? (
           <div className="mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Detected Schema Types:</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Detected Schema Types:</p>
             <div className="flex flex-wrap gap-2">
               {schemaTypes.map((type: string, i: number) => (
                 <span key={i} className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm">
@@ -381,12 +381,12 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
             </div>
           </div>
         ) : (
-          <p className="text-sm text-gray-500 mb-4 italic">No schema markup detected</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 italic">No schema markup detected</p>
         )}
 
         {schemaAnalysis.recommendations && Array.isArray(schemaAnalysis.recommendations) && schemaAnalysis.recommendations.length > 0 && (
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">📋 Schema Recommendations:</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">📋 Schema Recommendations:</p>
             <ul className="space-y-2">
               {schemaAnalysis.recommendations.map((rec: any, i: number) => {
                 // Handle both string and object formats
@@ -395,7 +395,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                 const recPriority = typeof rec === 'string' ? 'MEDIUM' : (rec.priority || 'MEDIUM');
 
                 return (
-                  <li key={i} className="text-sm text-gray-700">
+                  <li key={i} className="text-sm text-gray-700 dark:text-gray-200">
                     {i + 1}. <strong>{recType}</strong>: {recReason}
                     <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
                       {recPriority} Priority
@@ -410,23 +410,23 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
       {/* Detailed AI Engine Results */}
       {promptResults.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">🔍 Detailed AI Engine Results</h3>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🔍 Detailed AI Engine Results</h3>
           <div className="space-y-6">
             {promptResults.map((result: any, i: number) => (
               <div key={i} className="border-l-4 border-blue-500 pl-4">
-                <h4 className="font-semibold text-gray-900 mb-1">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                   Prompt {i + 1}: &ldquo;{result.prompt.prompt}&rdquo;
                 </h4>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   <strong>Intent:</strong> {result.prompt.intent} | <strong>Type:</strong> {result.prompt.type}
                 </p>
 
                 <div className="space-y-4">
                   {/* Google AI Overview */}
                   {result.checks.googleAIOverview && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h5 className="font-semibold text-gray-900 mb-2">Google AI Overview</h5>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                      <h5 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Google AI Overview</h5>
                       <div className="space-y-1 text-sm mb-2">
                         <p>
                           <strong>Cited:</strong>{' '}
@@ -454,7 +454,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.googleAIOverview.overviewText && (
                         <div className="mb-2">
                           <p className="font-semibold text-sm mb-1">AI Response:</p>
-                          <blockquote className="border-l-2 border-gray-300 pl-3 italic text-sm text-gray-700">
+                          <blockquote className="border-l-2 border-gray-300 dark:border-gray-700 pl-3 italic text-sm text-gray-700 dark:text-gray-300">
                             {result.checks.googleAIOverview.overviewText.substring(0, 300)}
                             {result.checks.googleAIOverview.overviewText.length > 300 ? '...' : ''}
                           </blockquote>
@@ -464,7 +464,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.googleAIOverview.citations && result.checks.googleAIOverview.citations.length > 0 && (
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
-                          <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
+                          <ol className="list-decimal list-inside text-xs text-gray-600 dark:text-gray-400 space-y-1">
                             {result.checks.googleAIOverview.citations.slice(0, 3).map((cite: any, idx: number) => {
                               const isObj = typeof cite === 'object' && cite !== null;
                               const url = isObj ? (cite.url || '') : cite;
@@ -491,8 +491,8 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
                   {/* Perplexity AI */}
                   {result.checks.perplexity && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h5 className="font-semibold text-gray-900 mb-2">Perplexity AI</h5>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                      <h5 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Perplexity AI</h5>
                       <div className="space-y-1 text-sm mb-2">
                         <p>
                           <strong>Cited:</strong>{' '}
@@ -517,7 +517,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.perplexity.response && (
                         <div className="mb-2">
                           <p className="font-semibold text-sm mb-1">AI Response:</p>
-                          <blockquote className="border-l-2 border-gray-300 pl-3 italic text-sm text-gray-700">
+                          <blockquote className="border-l-2 border-gray-300 dark:border-gray-700 pl-3 italic text-sm text-gray-700 dark:text-gray-300">
                             {result.checks.perplexity.response.substring(0, 300)}
                             {result.checks.perplexity.response.length > 300 ? '...' : ''}
                           </blockquote>
@@ -527,7 +527,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.perplexity.citations && result.checks.perplexity.citations.length > 0 && (
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
-                          <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
+                          <ol className="list-decimal list-inside text-xs text-gray-600 dark:text-gray-400 space-y-1">
                             {result.checks.perplexity.citations.slice(0, 3).map((cite: any, idx: number) => {
                               const isObj = typeof cite === 'object' && cite !== null;
                               const url = isObj ? (cite.url || '') : cite;
@@ -554,8 +554,8 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
                   {/* ChatGPT */}
                   {result.checks.chatgpt && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h5 className="font-semibold text-gray-900 mb-2">ChatGPT</h5>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                      <h5 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">ChatGPT</h5>
                       <div className="space-y-1 text-sm mb-2">
                         <p>
                           <strong>Cited:</strong>{' '}
@@ -580,7 +580,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.chatgpt.response && (
                         <div className="mb-2">
                           <p className="font-semibold text-sm mb-1">AI Response:</p>
-                          <blockquote className="border-l-2 border-gray-300 pl-3 italic text-sm text-gray-700">
+                          <blockquote className="border-l-2 border-gray-300 dark:border-gray-700 pl-3 italic text-sm text-gray-700 dark:text-gray-300">
                             {result.checks.chatgpt.response.substring(0, 300)}
                             {result.checks.chatgpt.response.length > 300 ? '...' : ''}
                           </blockquote>
@@ -590,7 +590,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                       {result.checks.chatgpt.citations && result.checks.chatgpt.citations.length > 0 && (
                         <div>
                           <p className="font-semibold text-sm mb-1">Citations:</p>
-                          <ol className="list-decimal list-inside text-xs text-gray-600 space-y-1">
+                          <ol className="list-decimal list-inside text-xs text-gray-600 dark:text-gray-400 space-y-1">
                             {result.checks.chatgpt.citations.slice(0, 3).map((cite: any, idx: number) => {
                               const isObj = typeof cite === 'object' && cite !== null;
                               const url = isObj ? (cite.url || '') : cite;
@@ -640,7 +640,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       {/* Analyze Another Button */}
       <button
         onClick={onAnalyzeAnother}
-        className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+        className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         🔄 Analyze Another Page
       </button>

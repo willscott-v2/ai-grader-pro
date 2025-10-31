@@ -38,7 +38,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-3xl space-y-6">
       <div>
-        <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Page URL
         </label>
         <input
@@ -50,17 +50,17 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
             if (e.target.value) validateUrl(e.target.value);
           }}
           placeholder="https://example.edu/programs/nursing"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           disabled={isAnalyzing}
           required
         />
         {urlError && (
-          <p className="mt-2 text-sm text-red-600">{urlError}</p>
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{urlError}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="keyword" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="keyword" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Target Keyword
         </label>
         <input
@@ -69,18 +69,18 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Nursing Program"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           disabled={isAnalyzing || schemaOnly}
           required={!schemaOnly}
         />
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           Enter the main keyword or phrase you want this page to rank for
         </p>
       </div>
 
       {/* Analysis Mode */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <p className="text-sm font-medium text-gray-700 mb-2">Analysis Mode</p>
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Analysis Mode</p>
         <div className="flex items-center gap-6 text-sm">
           <label className="inline-flex items-center gap-2">
             <input
@@ -90,7 +90,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
               onChange={() => setSchemaOnly(false)}
               disabled={isAnalyzing}
             />
-            <span>Full Analysis</span>
+            <span className="text-gray-800 dark:text-gray-100">Full Analysis</span>
           </label>
           <label className="inline-flex items-center gap-2">
             <input
@@ -100,11 +100,11 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
               onChange={() => setSchemaOnly(true)}
               disabled={isAnalyzing}
             />
-            <span>Schema Only</span>
+            <span className="text-gray-800 dark:text-gray-100">Schema Only</span>
           </label>
         </div>
         {schemaOnly && (
-          <p className="mt-2 text-xs text-gray-500">Skips AI engines and keyword expansion. Fast structured data check.</p>
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Skips AI engines and keyword expansion. Fast structured data check.</p>
         )}
       </div>
 
