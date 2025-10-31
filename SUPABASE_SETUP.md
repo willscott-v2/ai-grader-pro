@@ -123,25 +123,60 @@ Since Docker is not available for local development, we'll set up Supabase in th
    - Click the magic link
    - You should be redirected to the dashboard
 
-### Step 7: Whitelist Your User
+### Step 7: Setup Domain-Based Whitelist (Recommended)
 
-Since this is an internal tool with a whitelist, you need to whitelist yourself:
+The system supports **domain-based whitelisting** for easy team access management.
+
+#### Option A: Domain Whitelist (Recommended)
+
+1. **Run the Domain Whitelist Migration**
+   - Go to **SQL Editor** > **New Query**
+   - Copy contents of `supabase/migrations/002_domain_whitelist.sql`
+   - Paste and click **Run**
+
+2. **Whitelist Your Domain(s)**
+   - Go to **SQL Editor**
+   - Run this query (replace with your domain):
+   ```sql
+   INSERT INTO whitelisted_domains (domain, description) VALUES
+     ('yourcompany.com', 'Company domain'),
+     ('contractor.com', 'Contractor domain - optional');
+   ```
+
+3. **Make Yourself Admin**
+   - Still in **SQL Editor**, run:
+   ```sql
+   UPDATE profiles
+   SET is_admin = true
+   WHERE email = 'your-email@yourcompany.com';
+   ```
+
+4. **Sync Existing Users** (if any signed up before)
+   ```sql
+   SELECT * FROM sync_domain_whitelist();
+   ```
+
+**How it works:**
+- Any user who signs up with an email from a whitelisted domain is automatically whitelisted
+- No need to manually approve each user
+- Perfect for company domains (e.g., `@yourcompany.com`)
+
+#### Option B: Individual Email Whitelist
+
+If you prefer to whitelist individual users instead:
 
 1. **Via Supabase Dashboard**
    - Go to **Table Editor** > **profiles**
-   - Find your email in the list
-   - Click the row to edit
+   - Find the user's email
    - Set `is_whitelisted` to `true`
-   - Set `is_admin` to `true` (for first user)
+   - Set `is_admin` to `true` (for admins only)
    - Click **Save**
 
-2. **Via SQL (Alternative)**
-   - Go to **SQL Editor**
-   - Run this query (replace with your email):
+2. **Via SQL**
    ```sql
    UPDATE profiles
    SET is_whitelisted = true, is_admin = true
-   WHERE email = 'your-email@example.com';
+   WHERE email = 'user@example.com';
    ```
 
 ### Step 8: Verify Setup
@@ -158,11 +193,17 @@ Since this is an internal tool with a whitelist, you need to whitelist yourself:
 
 ## Database Schema
 
-The migration creates these tables:
+The migrations create these tables:
 
 **profiles**
-- User management with whitelist
+- User management with individual whitelist
 - Fields: `id`, `email`, `full_name`, `is_whitelisted`, `is_admin`
+- Auto-whitelisted if email domain is in `whitelisted_domains`
+
+**whitelisted_domains** (Migration 002)
+- Domain-based whitelist for automatic user approval
+- Fields: `id`, `domain`, `description`, `is_active`
+- Example: Add `yourcompany.com` to auto-approve all `@yourcompany.com` emails
 
 **runs**
 - Analysis batch/session

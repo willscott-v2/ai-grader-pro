@@ -33,36 +33,52 @@
    - Set "Confirmation URL" to: `http://localhost:3000/auth/callback` (development)
    - For production, use: `https://your-domain.com/auth/callback`
 
-### 4. Setup Email Whitelist
+### 4. Setup Access Control
 
-Since this is an internal tool, you need to whitelist specific users:
+Since this is an internal tool, you need to control who can access it.
 
-**Option A: Manual Entry (Recommended for First User)**
-1. Sign up/in with your email via the app
-2. Go to Supabase dashboard > **Table Editor** > **profiles**
-3. Find your user row
-4. Set `is_whitelisted` to `true`
-5. Set `is_admin` to `true` (for first user)
+**Option A: Domain-Based Whitelist (Recommended)**
 
-**Option B: SQL Insert**
-Run this SQL in the SQL Editor (replace with actual auth user ID and email):
+Run migration `002_domain_whitelist.sql` to enable automatic approval by email domain:
+
+1. Run the migration in SQL Editor
+2. Add your domain(s):
 ```sql
--- First, sign in via the app to get your auth.users ID created
--- Then run this to whitelist yourself:
+INSERT INTO whitelisted_domains (domain, description) VALUES
+  ('yourcompany.com', 'Company domain'),
+  ('contractor.com', 'Approved contractor');
+```
+3. Make yourself admin:
+```sql
+UPDATE profiles
+SET is_admin = true
+WHERE email = 'your-email@yourcompany.com';
+```
+4. Sync existing users (if any):
+```sql
+SELECT * FROM sync_domain_whitelist();
+```
+
+**How it works:** Anyone who signs up with an email from a whitelisted domain is automatically approved. Perfect for company domains like `@yourcompany.com`.
+
+📖 **See:** `DOMAIN_MANAGEMENT.md` for complete domain management guide.
+
+**Option B: Manual User Whitelist**
+
+If you prefer to approve users individually:
+
+```sql
+-- Whitelist specific users
 UPDATE profiles
 SET is_whitelisted = true, is_admin = true
 WHERE email = 'your-email@example.com';
-```
 
-**Option C: Add Multiple Users**
-```sql
--- Whitelist multiple users at once
+-- Or multiple users
 UPDATE profiles
 SET is_whitelisted = true
 WHERE email IN (
   'user1@example.com',
-  'user2@example.com',
-  'user3@example.com'
+  'user2@example.com'
 );
 ```
 
