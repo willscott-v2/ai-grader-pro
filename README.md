@@ -1,6 +1,6 @@
 # AI Grader Pro
 
-A web-based SEO analysis tool for evaluating higher education websites' visibility in AI search engines (Google AI Overviews, Perplexity, ChatGPT). Built with Next.js 15, Supabase, and TypeScript.
+A web-based SEO analysis tool for evaluating websites' visibility in AI search engines (Google AI Overviews, Perplexity, ChatGPT). Built with Next.js 15, Supabase, and TypeScript.
 
 ## Overview
 
