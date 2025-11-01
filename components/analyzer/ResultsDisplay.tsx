@@ -164,37 +164,51 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Overall Grade Card */}
-      <div className={`${gradeInfo.bgColor} dark:bg-opacity-20 border-2 border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center`}>
-        <h2 className="text-4xl font-bold mb-2">
-          <span className={`${gradeInfo.color} dark:text-green-300`}>Grade: {gradeInfo.grade}</span>
+      <div className={`${gradeInfo.bgColor} dark:bg-opacity-30 border-4 ${
+        overallScore >= 90 ? 'border-green-400' :
+        overallScore >= 80 ? 'border-blue-400' :
+        overallScore >= 70 ? 'border-yellow-400' :
+        overallScore >= 60 ? 'border-orange-400' :
+        'border-red-400'
+      } rounded-xl p-8 text-center shadow-lg`}>
+        <h2 className="text-5xl font-bold mb-3">
+          <span className={`${gradeInfo.color} dark:${
+            overallScore >= 90 ? 'text-green-400' :
+            overallScore >= 80 ? 'text-blue-400' :
+            overallScore >= 70 ? 'text-yellow-400' :
+            overallScore >= 60 ? 'text-orange-400' :
+            'text-red-400'
+          }`}>Grade: {gradeInfo.grade}</span>
         </h2>
-        <p className="text-2xl font-semibold text-gray-700 dark:text-gray-200">{overallScore}/100</p>
-        <p className="text-lg mt-2">
-          {gradeInfo.emoji} <span className="font-medium">{gradeInfo.label}</span>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white">{overallScore}/100</p>
+        <p className="text-2xl mt-3">
+          {gradeInfo.emoji} <span className="font-semibold">{gradeInfo.label}</span>
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">{analysis.url}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">Keyword: <strong className="text-gray-800 dark:text-gray-200">{analysis.keyword}</strong></p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-6">{analysis.url}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">Keyword: <strong className="text-gray-900 dark:text-white">{analysis.keyword}</strong></p>
       </div>
 
       {/* AI Visibility Score */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">📊 AI Visibility Score: {aiVisibility}/100</h3>
+      <div className="bg-white dark:bg-gray-900 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 shadow-md">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-500 -m-6 mb-4 p-4 rounded-t-lg">
+          <h3 className="text-2xl font-bold text-white">📊 AI Visibility Score: {aiVisibility}/100</h3>
+        </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Tested across {totalQueries} AI engine queries. {totalCitations} citation{totalCitations !== 1 ? 's' : ''} found with {citationRate}% citation rate.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Citation Rate</p>
-            <p className="text-2xl font-bold text-blue-600">{citationRate}%</p>
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-lg p-4 shadow-md">
+            <p className="text-sm font-semibold text-blue-100">Citation Rate</p>
+            <p className="text-3xl font-bold text-white">{citationRate}%</p>
           </div>
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Domain Mention Rate</p>
-            <p className="text-2xl font-bold text-green-600">{domainMentionRate}%</p>
+          <div className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 rounded-lg p-4 shadow-md">
+            <p className="text-sm font-semibold text-green-100">Domain Mention Rate</p>
+            <p className="text-3xl font-bold text-white">{domainMentionRate}%</p>
           </div>
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Average Position</p>
-            <p className="text-2xl font-bold text-purple-600">
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 rounded-lg p-4 shadow-md">
+            <p className="text-sm font-semibold text-purple-100">Average Position</p>
+            <p className="text-3xl font-bold text-white">
               {averagePosition ? `#${averagePosition}` : 'Not cited'}
             </p>
           </div>
@@ -213,8 +227,10 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Keyword Expansion Analysis */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🔑 Keyword Expansion Analysis</h3>
+      <div className="bg-white dark:bg-gray-900 border-2 border-green-200 dark:border-green-800 rounded-lg p-6 shadow-md">
+        <div className="bg-gradient-to-r from-green-500 to-emerald-500 -m-6 mb-4 p-4 rounded-t-lg">
+          <h3 className="text-2xl font-bold text-white">🔑 Keyword Expansion Analysis</h3>
+        </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           <strong>Base Keyword:</strong> {analysis.keyword}
         </p>
@@ -249,26 +265,28 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Entity & Content Analysis */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🎯 Entity & Content Analysis</h3>
+      <div className="bg-white dark:bg-gray-900 border-2 border-purple-200 dark:border-purple-800 rounded-lg p-6 shadow-md">
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 -m-6 mb-4 p-4 rounded-t-lg">
+          <h3 className="text-2xl font-bold text-white">🎯 Entity & Content Analysis</h3>
+        </div>
 
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Semantic Score</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg p-6 mb-4 shadow-md border-2 border-gray-300 dark:border-gray-700">
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Overall Semantic Score</p>
+          <p className="text-4xl font-bold text-gray-900 dark:text-white">
             {Math.round((entityDensity + topicCoverage + eeatScore) / 3)}/100
           </p>
-          <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
-            <div>
-              <p className="text-gray-600 dark:text-gray-400">Entity Density</p>
-              <p className="font-bold text-green-600">{entityDensity}/100</p>
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-3 text-center">
+              <p className="text-xs font-semibold text-green-100">Entity Density</p>
+              <p className="text-2xl font-bold text-white">{entityDensity}</p>
             </div>
-            <div>
-              <p className="text-gray-600 dark:text-gray-400">Topic Coverage</p>
-              <p className="font-bold text-blue-600">{topicCoverage}/100</p>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-3 text-center">
+              <p className="text-xs font-semibold text-blue-100">Topic Coverage</p>
+              <p className="text-2xl font-bold text-white">{topicCoverage}</p>
             </div>
-            <div>
-              <p className="text-gray-600 dark:text-gray-400">E-E-A-T Score</p>
-              <p className="font-bold text-purple-600">{eeatScore}/100</p>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-3 text-center">
+              <p className="text-xs font-semibold text-purple-100">E-E-A-T Score</p>
+              <p className="text-2xl font-bold text-white">{eeatScore}</p>
             </div>
           </div>
         </div>
@@ -310,35 +328,35 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
           )}
         </ul>
 
-        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">E-E-A-T Signals</h4>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4 text-sm">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-2">
-            <p className="text-gray-600 dark:text-gray-400">Author Credentials</p>
-            <p className="font-bold text-blue-600">
-              {Array.isArray(eeatSignals.authorCredentials) ? eeatSignals.authorCredentials.length : 0} found
+        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-lg">E-E-A-T Signals</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+          <div className="bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-700 rounded-lg p-3 shadow">
+            <p className="text-xs font-semibold text-blue-100">Author Credentials</p>
+            <p className="text-2xl font-bold text-white">
+              {Array.isArray(eeatSignals.authorCredentials) ? eeatSignals.authorCredentials.length : 0}
             </p>
           </div>
-          <div className="bg-green-50 dark:bg-green-900/20 rounded p-2">
-            <p className="text-gray-600 dark:text-gray-400">Accreditations</p>
-            <p className="font-bold text-green-600">
-              {Array.isArray(eeatSignals.accreditation) ? eeatSignals.accreditation.length : 0} mentioned
+          <div className="bg-gradient-to-br from-green-400 to-green-500 dark:from-green-600 dark:to-green-700 rounded-lg p-3 shadow">
+            <p className="text-xs font-semibold text-green-100">Accreditations</p>
+            <p className="text-2xl font-bold text-white">
+              {Array.isArray(eeatSignals.accreditation) ? eeatSignals.accreditation.length : 0}
             </p>
           </div>
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
-            <p className="text-gray-600 dark:text-gray-400">Statistics/Data</p>
-            <p className="font-bold text-purple-600">
-              {Array.isArray(eeatSignals.statistics) ? eeatSignals.statistics.length : 0} found
+          <div className="bg-gradient-to-br from-purple-400 to-purple-500 dark:from-purple-600 dark:to-purple-700 rounded-lg p-3 shadow">
+            <p className="text-xs font-semibold text-purple-100">Statistics/Data</p>
+            <p className="text-2xl font-bold text-white">
+              {Array.isArray(eeatSignals.statistics) ? eeatSignals.statistics.length : 0}
             </p>
           </div>
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded p-2">
-            <p className="text-gray-600 dark:text-gray-400">Expert Quotes</p>
-            <p className="font-bold text-yellow-600">
+          <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 dark:from-yellow-600 dark:to-yellow-700 rounded-lg p-3 shadow">
+            <p className="text-xs font-semibold text-yellow-100">Expert Quotes</p>
+            <p className="text-2xl font-bold text-white">
               {typeof eeatSignals.expertQuotes === 'number' ? eeatSignals.expertQuotes : 0}
             </p>
           </div>
-          <div className="bg-red-50 dark:bg-red-900/20 rounded p-2">
-            <p className="text-gray-600 dark:text-gray-400">Citations</p>
-            <p className="font-bold text-red-600">
+          <div className="bg-gradient-to-br from-red-400 to-red-500 dark:from-red-600 dark:to-red-700 rounded-lg p-3 shadow">
+            <p className="text-xs font-semibold text-red-100">Citations</p>
+            <p className="text-2xl font-bold text-white">
               {typeof eeatSignals.citations === 'number' ? eeatSignals.citations : 0}
             </p>
           </div>
@@ -362,8 +380,10 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
       </div>
 
       {/* Schema Markup Analysis */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🏗️ Schema Markup Analysis</h3>
+      <div className="bg-white dark:bg-gray-900 border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 shadow-md">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 -m-6 mb-4 p-4 rounded-t-lg">
+          <h3 className="text-2xl font-bold text-white">🏗️ Schema Markup Analysis</h3>
+        </div>
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Schema Score</p>
           <p className="text-3xl font-bold text-blue-600">{schemaScore}/100</p>
@@ -410,8 +430,10 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
       {/* Detailed AI Engine Results */}
       {promptResults.length > 0 && (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🔍 Detailed AI Engine Results</h3>
+        <div className="bg-white dark:bg-gray-900 border-2 border-indigo-200 dark:border-indigo-800 rounded-lg p-6 shadow-md">
+          <div className="bg-gradient-to-r from-indigo-500 to-blue-500 -m-6 mb-4 p-4 rounded-t-lg">
+            <h3 className="text-2xl font-bold text-white">🔍 Detailed AI Engine Results</h3>
+          </div>
           <div className="space-y-6">
             {promptResults.map((result: any, i: number) => (
               <div key={i} className="border-l-4 border-blue-500 pl-4">
