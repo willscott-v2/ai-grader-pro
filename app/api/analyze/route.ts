@@ -459,7 +459,7 @@ ${i === 0 && aiScore < 50 ? 'Your content is rarely cited by AI search engines. 
 **Effort:** ${rec.effort}
 
 **Action Steps:**
-${rec.details.includes('Add') ? rec.details.split('Add').slice(1).map((s: string, idx: number) => `${idx + 1}. Add${s.trim()}`).join('\n') : `1. ${rec.details}`}
+${rec.details.includes('Add') ? rec.details.split('Add').slice(1).map((s: string, idx: number) => `${idx + 1}. Add ${s.trim()}`).join('\n') : `1. ${rec.details}`}
 `
 ).join('\n\n') : '_Your page shows good AI search readiness. Continue monitoring and optimizing based on the metrics above._'}
 

@@ -62,7 +62,13 @@ export default function Home() {
                 // Decode Base64-encoded result if present
                 let resultData = data.data;
                 if (data.encoded && typeof data.data === 'string') {
-                  const decodedJson = atob(data.data);
+                  // Use TextDecoder for proper UTF-8 handling (supports emojis)
+                  const binaryString = atob(data.data);
+                  const bytes = new Uint8Array(binaryString.length);
+                  for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                  }
+                  const decodedJson = new TextDecoder('utf-8').decode(bytes);
                   resultData = JSON.parse(decodedJson);
                 }
                 setResults(resultData);
