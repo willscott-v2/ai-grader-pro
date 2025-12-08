@@ -6,6 +6,8 @@ import ProgressDisplay from '@/components/analyzer/ProgressDisplay';
 import ResultsDisplay from '@/components/analyzer/ResultsDisplay';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import UserMenu from '@/components/ui/UserMenu';
+import { Button } from '@/components/ui/design-system/button';
+import { Card } from '@/components/ui/design-system/card';
 
 type AppState = 'idle' | 'analyzing' | 'complete' | 'error';
 
@@ -97,34 +99,41 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--lighter-blue)] to-[var(--dark-blue)]">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-between max-w-6xl mx-auto mb-6">
-            <div />
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <UserMenu />
+        <header className="header mb-12">
+          <div className="container">
+            <div className="header-content">
+              <div className="logo-section">
+                <h1 className="text-5xl font-bold text-white mb-4">
+                  AI Grader Pro
+                </h1>
+                <div className="tagline">
+                  AI Search Readiness Analyzer
+                </div>
+                <div className="header-description">
+                  <p>Analyze how well your webpages perform in AI-powered search results. Get instant visibility scores, entity analysis, and actionable recommendations.</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3">
+                <ThemeToggle />
+                <UserMenu />
+              </div>
             </div>
           </div>
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            AI Grader Pro
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Analyze how well your webpages perform in AI-powered search results.
-            Get instant visibility scores and actionable recommendations.
-          </p>
-        </div>
+        </header>
 
         {/* Main content area */}
         <div className="flex flex-col items-center space-y-8">
           {/* Form - always visible when not complete */}
           {state !== 'complete' && (
-            <AnalyzerForm
-              onSubmit={handleAnalyze}
-              isAnalyzing={state === 'analyzing'}
-            />
+            <Card variant="glass" padding="lg" className="w-full max-w-3xl">
+              <AnalyzerForm
+                onSubmit={handleAnalyze}
+                isAnalyzing={state === 'analyzing'}
+              />
+            </Card>
           )}
 
           {/* Progress indicator */}
@@ -137,23 +146,24 @@ export default function Home() {
 
           {/* Error message */}
           {state === 'error' && (
-            <div className="w-full max-w-3xl p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+            <Card variant="solid" padding="md" className="w-full max-w-3xl border-2 border-[var(--error-red)]">
               <div className="flex items-center space-x-3">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[var(--error-red)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="text-lg font-semibold text-red-900 dark:text-red-300">Analysis Failed</h3>
-                  <p className="text-red-700 dark:text-red-400">{error}</p>
+                  <h3 className="text-lg font-semibold text-[var(--error-red)]">Analysis Failed</h3>
+                  <p className="text-[var(--error-red)]">{error}</p>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={handleReset}
-                className="mt-4 py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                variant="destructive"
+                className="mt-4"
               >
                 Try Again
-              </button>
-            </div>
+              </Button>
+            </Card>
           )}
 
           {/* Results */}
@@ -166,14 +176,16 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm">
-          <p>
-            Powered by Claude AI, Perplexity, and Google AI Overviews
-          </p>
-          <p className="mt-2">
-            Analysis typically takes 2-3 minutes
-          </p>
-        </div>
+        <footer className="footer mt-16">
+          <div className="container">
+            <p>
+              Powered by Claude AI, Perplexity, and Google AI Overviews
+            </p>
+            <p className="mt-2">
+              Analysis typically takes 2-3 minutes
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/design-system/button';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -43,26 +44,26 @@ export default function ThemeToggle() {
 
   return (
     <div className="inline-flex items-center gap-2 text-sm">
-      <button
+      <Button
         type="button"
         onClick={() => changeTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        variant="secondary"
+        size="sm"
         aria-label="Toggle dark mode"
         title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() => changeTheme('system')}
-        className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        variant="secondary"
+        size="sm"
         aria-label="Use system theme"
         title="Use system theme"
       >
         🖥️ System
-      </button>
+      </Button>
     </div>
   );
 }
-
-

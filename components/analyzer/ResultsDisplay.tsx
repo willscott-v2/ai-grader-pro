@@ -1,6 +1,8 @@
 'use client';
 
 import { downloadMarkdown, downloadJSON } from '@/lib/download-utils';
+import { Button } from '@/components/ui/design-system/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/design-system/card';
 
 interface ResultsDisplayProps {
   data: {
@@ -29,21 +31,26 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
     return (
       <div className="w-full max-w-6xl space-y-6">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="font-medium text-gray-600 dark:text-gray-400">Brand:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">{pageData.organizationName || 'Unknown'}</span>
+        <Card variant="solid" padding="sm">
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-[var(--muted-text)]">Brand:</span>
+                <span className="ml-2">{pageData.organizationName || 'Unknown'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-[var(--muted-text)]">URL:</span>
+                <span className="ml-2">{analysis.url}</span>
+              </div>
             </div>
-            <div>
-              <span className="font-medium text-gray-600 dark:text-gray-400">URL:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">{analysis.url}</span>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">🏗️ Schema Markup Analysis</h3>
+        <Card variant="solid" padding="md">
+          <CardHeader>
+            <CardTitle>🏗️ Schema Markup Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
           <div className="mb-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Schema Score</p>
             <p className="text-3xl font-bold text-blue-600">{schemaAnalysis.schemaScore || schemaAnalysis.score || 0}/100</p>
@@ -76,29 +83,33 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
               </ul>
             </div>
           )}
-        </div>
+          </CardContent>
+        </Card>
 
         <div className="flex gap-4">
-          <button
+          <Button
             onClick={() => downloadMarkdown(markdown, analysis.url)}
-            className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            variant="default"
+            className="flex-1"
           >
             📄 Download Schema Report (.md)
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => downloadJSON(data, analysis.url)}
-            className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+            variant="success"
+            className="flex-1"
           >
             💾 Download Raw Data (.json)
-          </button>
+          </Button>
         </div>
 
-        <button
+        <Button
           onClick={onAnalyzeAnother}
-          className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+          variant="secondary"
+          className="w-full"
         >
           🔄 Analyze Another Page
-        </button>
+        </Button>
       </div>
     );
   }
@@ -146,22 +157,24 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
   return (
       <div className="w-full max-w-6xl space-y-6">
       {/* Brand Header */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-              <span className="font-medium text-gray-600 dark:text-gray-400">Brand:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">{pageData.organizationName || 'Unknown'}</span>
-          </div>
-          <div>
-              <span className="font-medium text-gray-600 dark:text-gray-400">Location:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">
-              {location?.city && location?.state
-                ? `${location.city}, ${location.state}`
-                : location?.state || 'Unknown'}
-            </span>
-          </div>
-        </div>
-      </div>
+        <Card variant="solid" padding="sm">
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-[var(--muted-text)]">Brand:</span>
+                <span className="ml-2">{pageData.organizationName || 'Unknown'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-[var(--muted-text)]">Location:</span>
+                <span className="ml-2">
+                  {location?.city && location?.state
+                    ? `${location.city}, ${location.state}`
+                    : location?.state || 'Unknown'}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
       {/* Overall Grade Card */}
       <div className={`${gradeInfo.bgColor} dark:bg-opacity-30 border-4 ${
@@ -645,27 +658,30 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
 
       {/* Download Buttons */}
       <div className="flex gap-4">
-        <button
+        <Button
           onClick={() => downloadMarkdown(markdown, analysis.url)}
-          className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          variant="default"
+          className="flex-1"
         >
           📄 Download Full Report (.md)
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => downloadJSON(analysis, analysis.url)}
-          className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+          variant="success"
+          className="flex-1"
         >
           💾 Download Raw Data (.json)
-        </button>
+        </Button>
       </div>
 
       {/* Analyze Another Button */}
-      <button
+      <Button
         onClick={onAnalyzeAnother}
-        className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        variant="secondary"
+        className="w-full"
       >
         🔄 Analyze Another Page
-      </button>
+      </Button>
     </div>
   );
 }

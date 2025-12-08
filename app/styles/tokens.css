@@ -1,0 +1,115 @@
+/**
+ * Search Influence Design System - Design Tokens
+ * CSS Variables for colors, spacing, typography, shadows, and more
+ */
+
+:root {
+  /* Primary Brand Colors */
+  --orange-accent: #e67e22;
+  --orange-dark: #d35400;
+  --orange-light: #f39c12;
+  --dark-blue: #2c3e50;
+  --lighter-blue: #34495e;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --light-gray: #ecf0f1;
+  --medium-gray: #bdc3c7;
+  --dark-gray: #95a5a6;
+  --muted-text: #7f8c8d;
+  --border-gray: #dee2e6;
+  --background-gray: #f8f9fa;
+
+  /* Semantic Colors */
+  --success-green: #27ae60;
+  --error-red: #e74c3c;
+  --info-blue: #3498db;
+
+  /* Spacing Scale */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 20px;
+  --space-lg: 30px;
+  --space-xl: 40px;
+  --space-xxl: 60px;
+
+  /* Typography */
+  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-xl: 0 12px 40px rgba(0,0,0,0.15);
+  --shadow-orange: 0 4px 15px rgba(230, 126, 34, 0.3);
+  --shadow-orange-hover: 0 8px 25px rgba(230, 126, 34, 0.4);
+
+  /* Layout */
+  --container-max-width: 1200px;
+  --container-padding: 20px;
+
+  /* Transitions */
+  --transition-default: all 0.3s ease;
+
+  /* Shadcn/ui compatibility (using Search Influence colors) */
+  --background: 0 0% 100%;
+  --foreground: 210 11% 15%; /* dark-blue */
+  --card: 0 0% 100%;
+  --card-foreground: 210 11% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 11% 15%;
+  --primary: 24 85% 53%; /* orange-accent */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 210 11% 15%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 24 85% 53%; /* orange-accent */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 4 90% 58%; /* error-red */
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 87%; /* border-gray */
+  --input: 0 0% 87%;
+  --ring: 24 85% 53%; /* orange-accent */
+  --radius: 0.5rem;
+  --chart-1: 145 63% 42%; /* success-green */
+  --chart-2: 24 85% 53%; /* orange-accent */
+  --chart-3: 204 70% 53%; /* info-blue */
+  --chart-4: 24 85% 41%; /* orange-dark */
+  --chart-5: 39 100% 50%; /* orange-light */
+}
+
+.dark {
+  /* Dark mode with Search Influence styling */
+  --background: 210 11% 15%; /* dark-blue */
+  --foreground: 0 0% 100%;
+  --card: 210 13% 20%; /* lighter-blue */
+  --card-foreground: 0 0% 100%;
+  --popover: 210 13% 20%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 24 85% 53%; /* orange-accent */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 24 85% 53%; /* orange-accent */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 4 90% 58%; /* error-red */
+  --destructive-foreground: 0 0% 100%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 24 85% 53%; /* orange-accent */
+  --chart-1: 145 63% 42%;
+  --chart-2: 24 85% 53%;
+  --chart-3: 204 70% 53%;
+  --chart-4: 24 85% 41%;
+  --chart-5: 39 100% 50%;
+}

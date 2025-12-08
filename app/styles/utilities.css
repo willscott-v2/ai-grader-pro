@@ -1,0 +1,66 @@
+/**
+ * Search Influence Design System - Utility Classes
+ * Glassmorphism effects, gradients, and text styles
+ */
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.glass-card-hover {
+  transition: var(--transition-default);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Gradient Button */
+.btn-gradient-orange {
+  background: linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%);
+  box-shadow: var(--shadow-orange);
+  transition: var(--transition-default);
+}
+
+.btn-gradient-orange:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-orange-hover);
+  background: linear-gradient(135deg, var(--orange-light) 0%, var(--orange-accent) 100%);
+}
+
+/* Gradient Text */
+.text-gradient-orange {
+  background: linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Container System */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--orange-accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/design-system/button';
+import { Input } from '@/components/ui/design-system/input';
+import { Label } from '@/components/ui/design-system/label';
+import { Card, CardContent } from '@/components/ui/design-system/card';
 
 interface AnalyzerFormProps {
   onSubmit: (url: string, keyword: string, schemaOnly: boolean) => void;
@@ -38,10 +42,10 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-3xl space-y-6">
       <div>
-        <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+        <Label htmlFor="url" className="mb-2">
           Page URL
-        </label>
-        <input
+        </Label>
+        <Input
           type="text"
           id="url"
           value={url}
@@ -50,71 +54,73 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
             if (e.target.value) validateUrl(e.target.value);
           }}
           placeholder="https://example.edu/programs/nursing"
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           disabled={isAnalyzing}
           required
         />
         {urlError && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{urlError}</p>
+          <p className="mt-2 text-sm text-[var(--error-red)]">{urlError}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="keyword" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+        <Label htmlFor="keyword" className="mb-2">
           Target Keyword
-        </label>
-        <input
+        </Label>
+        <Input
           type="text"
           id="keyword"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Nursing Program"
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           disabled={isAnalyzing || schemaOnly}
           required={!schemaOnly}
         />
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-sm text-[var(--muted-text)]">
           Enter the main keyword or phrase you want this page to rank for
         </p>
       </div>
 
       {/* Analysis Mode */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Analysis Mode</p>
-        <div className="flex items-center gap-6 text-sm">
-          <label className="inline-flex items-center gap-2">
-            <input
-              type="radio"
-              name="mode"
-              checked={!schemaOnly}
-              onChange={() => setSchemaOnly(false)}
-              disabled={isAnalyzing}
-            />
-            <span className="text-gray-800 dark:text-gray-100">Full Analysis</span>
-          </label>
-          <label className="inline-flex items-center gap-2">
-            <input
-              type="radio"
-              name="mode"
-              checked={schemaOnly}
-              onChange={() => setSchemaOnly(true)}
-              disabled={isAnalyzing}
-            />
-            <span className="text-gray-800 dark:text-gray-100">Schema Only</span>
-          </label>
-        </div>
-        {schemaOnly && (
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Skips AI engines and keyword expansion. Fast structured data check.</p>
-        )}
-      </div>
+      <Card variant="solid" padding="sm">
+        <CardContent>
+          <p className="text-sm font-medium mb-2">Analysis Mode</p>
+          <div className="flex items-center gap-6 text-sm">
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="mode"
+                checked={!schemaOnly}
+                onChange={() => setSchemaOnly(false)}
+                disabled={isAnalyzing}
+                className="cursor-pointer"
+              />
+              <span>Full Analysis</span>
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="mode"
+                checked={schemaOnly}
+                onChange={() => setSchemaOnly(true)}
+                disabled={isAnalyzing}
+                className="cursor-pointer"
+              />
+              <span>Schema Only</span>
+            </label>
+          </div>
+          {schemaOnly && (
+            <p className="mt-2 text-xs text-[var(--muted-text)]">Skips AI engines and keyword expansion. Fast structured data check.</p>
+          )}
+        </CardContent>
+      </Card>
 
-      <button
+      <Button
         type="submit"
         disabled={isAnalyzing || !url || (!!urlError) || (!schemaOnly && !keyword)}
-        className="w-full py-3 px-6 text-white font-medium rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        className="w-full"
       >
         {isAnalyzing ? 'Analyzing...' : (schemaOnly ? 'Run Schema Check' : 'Analyze Page')}
-      </button>
+      </Button>
     </form>
   );
 }
