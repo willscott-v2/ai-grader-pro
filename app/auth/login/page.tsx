@@ -2,7 +2,12 @@
 
 import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/design-system/button';
+import { Input } from '@/components/ui/design-system/input';
+import { Label } from '@/components/ui/design-system/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/design-system/card';
 
 function LoginForm() {
   const supabase = createClient();
@@ -37,47 +42,81 @@ function LoginForm() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-6">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Sign in</h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">We'll email you a magic link to sign in.</p>
+  if (status === 'sent') {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[var(--dark-blue)] to-[var(--lighter-blue)]">
+        <Card variant="glass" padding="lg" className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-white text-2xl">Check your email</CardTitle>
+            <CardDescription className="text-[var(--light-gray)] text-base mt-1">
+              We sent you a magic link to {email}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-2">
+            <p className="text-base text-[var(--light-gray)]">
+              Click the link in the email to sign in to your account. You can close this window.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-        {status === 'sent' ? (
-          <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 p-4 text-emerald-900 dark:text-emerald-200">
-            Check your email for the sign-in link.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-              <input
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-[var(--dark-blue)] to-[var(--lighter-blue)]">
+      <div className="mb-8 text-center">
+        <div className="logo-container" style={{ margin: '0 auto 20px' }}>
+          <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+            <Image src="/search-influence-logo.png" alt="Search Influence" className="si-logo" width={200} height={60} />
+          </a>
+        </div>
+        <h1 className="text-4xl font-extrabold">
+          <span className="text-gradient-orange">AI Grader Pro</span>
+        </h1>
+        <p className="text-[var(--orange-accent)] text-lg font-semibold mt-2">AI Search Readiness Analyzer</p>
+      </div>
+
+      <Card variant="glass" padding="lg" className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-white text-2xl">Welcome</CardTitle>
+          <CardDescription className="text-[var(--light-gray)] text-base mt-1">
+            Sign in with your email to get started
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-white text-sm font-medium">
+                Email
+              </Label>
+              <Input
                 id="email"
                 type="email"
-                required
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+                disabled={status === 'sending'}
+                variant="glass"
+                className="text-lg py-3"
               />
             </div>
-
             {error && (
-              <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-red-800 dark:text-red-200">
+              <div className="text-sm text-[var(--error-red)] bg-red-900/20 border border-red-800/30 rounded-md p-3">
                 {error}
               </div>
             )}
-
-            <button
-              type="submit"
-              disabled={status === 'sending'}
-              className="w-full rounded-md bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5"
-            >
-              {status === 'sending' ? 'Sending…' : 'Send magic link'}
-            </button>
-          </form>
-        )}
-      </div>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4 mt-4">
+            <Button type="submit" className="w-full" disabled={status === 'sending'} size="lg">
+              {status === 'sending' ? 'Sending magic link...' : 'Send magic link'}
+            </Button>
+            <p className="text-sm text-[var(--light-gray)] text-center">
+              No password required. We&apos;ll send you a secure link to sign in.
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 }
@@ -85,8 +124,8 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--dark-blue)] to-[var(--lighter-blue)]">
+        <div className="text-white">Loading...</div>
       </div>
     }>
       <LoginForm />
