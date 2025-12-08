@@ -4,7 +4,6 @@ import { useState } from 'react';
 import AnalyzerForm from '@/components/analyzer/AnalyzerForm';
 import ProgressDisplay from '@/components/analyzer/ProgressDisplay';
 import ResultsDisplay from '@/components/analyzer/ResultsDisplay';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 import UserMenu from '@/components/ui/UserMenu';
 import { Button } from '@/components/ui/design-system/button';
 import { Card } from '@/components/ui/design-system/card';
@@ -116,8 +115,7 @@ export default function Home() {
                   <p>Analyze how well your webpages perform in AI-powered search results. Get instant visibility scores, entity analysis, and actionable recommendations.</p>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3">
-                <ThemeToggle />
+              <div className="flex items-center justify-end">
                 <UserMenu />
               </div>
             </div>
