@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import AnalyzerForm from '@/components/analyzer/AnalyzerForm';
 import ProgressDisplay from '@/components/analyzer/ProgressDisplay';
 import ResultsDisplay from '@/components/analyzer/ResultsDisplay';
@@ -105,14 +106,20 @@ export default function Home() {
           <div className="container">
             <div className="header-content">
               <div className="logo-section">
-                <h1 className="text-5xl font-bold text-white mb-4">
-                  AI Grader Pro
-                </h1>
-                <div className="tagline">
-                  AI Search Readiness Analyzer
+                <div className="logo-container">
+                  <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+                    <Image src="/search-influence-logo.png" alt="Search Influence" className="si-logo" width={200} height={60} />
+                  </a>
                 </div>
+                <h1>AI Grader Pro</h1>
+                <div className="tagline">AI Search Readiness Analyzer</div>
                 <div className="header-description">
                   <p>Analyze how well your webpages perform in AI-powered search results. Get instant visibility scores, entity analysis, and actionable recommendations.</p>
+                  <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--orange-accent)' }}>
+                    <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'underline' }}>
+                      Powered by Search Influence - AI SEO Experts
+                    </a>
+                  </p>
                 </div>
               </div>
               <div className="flex items-center justify-end">
@@ -176,12 +183,35 @@ export default function Home() {
         {/* Footer */}
         <footer className="footer mt-16">
           <div className="container">
-            <p>
-              Powered by Claude AI, Perplexity, and Google AI Overviews
-            </p>
-            <p className="mt-2">
-              Analysis typically takes 2-3 minutes
-            </p>
+            <div className="text-center">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                <div className="logo-container" style={{ margin: '0 15px 0 0' }}>
+                  <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+                    <Image src="/search-influence-logo.png" alt="Search Influence" className="si-logo" width={200} height={60} />
+                  </a>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--white)', margin: '0 0 5px 0' }}>Search Influence</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--medium-gray)', margin: 0 }}>AI SEO Experts</p>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: 'var(--dark-gray)', margin: '0 0 20px 0', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
+                Helping higher education institutions and healthcare organizations
+                increase visibility and drive measurable growth through AI-powered SEO strategies.
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', fontSize: '0.8rem', color: 'var(--dark-gray)' }}>
+                <span>•</span>
+                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
+                  Visit Search Influence
+                </a>
+                <span>•</span>
+                <a href="https://ai-grader.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
+                  AI Website Grader
+                </a>
+                <span>•</span>
+                <span>Powered by Claude AI, Perplexity, and Google AI Overviews</span>
+              </div>
+            </div>
           </div>
         </footer>
       </div>

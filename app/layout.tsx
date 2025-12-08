@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AI Grader Pro - AI Search Readiness Analyzer",
   description: "Analyze how well your webpages perform in AI-powered search results. Get instant visibility scores, entity analysis, and actionable recommendations.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
