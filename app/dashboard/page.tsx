@@ -14,8 +14,8 @@ export default async function DashboardPage() {
             <CardTitle>Account Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[var(--muted-text)]">
-              Signed in as <span className="font-medium text-foreground">{user?.email}</span>
+            <p className="text-[var(--light-gray)]">
+              Signed in as <span className="font-medium text-white">{user?.email}</span>
             </p>
           </CardContent>
         </Card>

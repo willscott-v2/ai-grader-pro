@@ -228,6 +228,22 @@ vercel env add NEXT_PUBLIC_SUPABASE_URL
 - [Environment Variables](./.env.example) - All API keys and configuration
 - [ROADMAP.md](./ROADMAP.md) - Feature roadmap and future plans
 
+## Security
+
+### Security Updates
+
+**December 2024 - React2Shell Vulnerability (CVE-2025-66478 / CVE-2025-55182)**
+
+- **Issue**: React2Shell vulnerability affecting React Server Components, allowing unauthenticated remote code execution due to unsafe deserialization in the React Flight protocol.
+- **Affected Packages**: 
+  - `react` and `react-dom` versions 19.0.0, 19.1.0, 19.1.1, and 19.2.0
+  - `next` versions 15.0.0 through 16.0.6
+- **Resolution**: 
+  - Upgraded `react` from `19.2.0` to `19.2.1`
+  - Upgraded `react-dom` from `19.2.0` to `19.2.1`
+  - Verified `next` is at `16.0.7` (patched version)
+- **Date**: December 2024
+
 ## License
 
 Proprietary - Internal use only

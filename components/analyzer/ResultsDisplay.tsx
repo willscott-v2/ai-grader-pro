@@ -15,7 +15,7 @@ interface ResultsDisplayProps {
 function getGradeColor(score: number): string {
   if (score >= 90) return 'text-[var(--success-green)]';
   if (score >= 80) return 'text-[var(--info-blue)]';
-  if (score >= 70) return 'text-yellow-400';
+  if (score >= 70) return 'text-[var(--orange-light)]';
   if (score >= 60) return 'text-[var(--orange-accent)]';
   return 'text-[var(--error-red)]';
 }
@@ -223,8 +223,8 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
               <p className="text-sm font-semibold text-[var(--success-green)] mb-1">Domain Mention Rate</p>
               <p className="text-3xl font-bold text-white">{domainMentionRate}%</p>
             </div>
-            <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
-              <p className="text-sm font-semibold text-purple-400 mb-1">Average Position</p>
+            <div className="bg-[var(--orange-accent)]/20 border border-[var(--orange-accent)]/30 rounded-lg p-4">
+              <p className="text-sm font-semibold text-[var(--orange-accent)] mb-1">Average Position</p>
               <p className="text-3xl font-bold text-white">
                 {averagePosition ? `#${averagePosition}` : 'Not cited'}
               </p>
@@ -290,7 +290,83 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
           <CardTitle className="text-white text-xl">🎯 Entity & Content Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-6 mb-4">
+          {/* Main Topic Section */}
+          {topics.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-[var(--medium-gray)] mb-3 uppercase tracking-wide">Main Topic</h4>
+              <div className="bg-white/10 border-2 border-white/20 rounded-lg p-6">
+                <p className="text-2xl font-bold text-[var(--orange-accent)]">
+                  {topics[0].topic}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Entities Section */}
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-[var(--medium-gray)] mb-4 uppercase tracking-wide">Entities ({namedEntities.length})</h4>
+            {namedEntities.length > 0 ? (
+              <div className="space-y-4">
+                {namedEntities.map((e: any, i: number) => {
+                  // Calculate confidence from mentions (more mentions = higher confidence)
+                  const maxMentions = Math.max(...namedEntities.map((ne: any) => ne.mentions || 1));
+                  const confidence = e.mentions ? Math.round((e.mentions / maxMentions) * 100) : 50;
+                  const description = e.description || `${e.type} mentioned ${e.mentions || 0} time${(e.mentions || 0) !== 1 ? 's' : ''} on the page`;
+                  
+                  return (
+                    <div key={i} className="bg-white/5 border border-white/10 rounded-lg p-5 hover:bg-white/10 transition-colors">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h5 className="text-lg font-bold text-white mb-2">{e.name || e.text}</h5>
+                          <p className="text-xs font-semibold text-[var(--medium-gray)] uppercase tracking-wide mb-3">Type: {e.type}</p>
+                          <p className="text-sm text-[var(--light-gray)] leading-relaxed">{description}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/10">
+                        {/* Confidence Badge */}
+                        <div className="inline-flex items-center gap-2 bg-[var(--orange-accent)]/20 text-[var(--orange-accent)] border border-[var(--orange-accent)]/30 px-3 py-1.5 rounded-md text-sm font-semibold">
+                          <span>Confidence:</span>
+                          <span>{confidence}%</span>
+                        </div>
+                        
+                        {/* Sources Badge - placeholder for future enhancement */}
+                        {e.sources && Array.isArray(e.sources) && e.sources.length > 0 ? (
+                          <div className="inline-flex items-center gap-2 bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30 px-3 py-1.5 rounded-md text-sm font-semibold">
+                            <span>Sources:</span>
+                            <span>{e.sources.length}</span>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center gap-2 bg-white/10 text-[var(--light-gray)] border border-white/10 px-3 py-1.5 rounded-md text-sm">
+                            <span>Mentions:</span>
+                            <span>{e.mentions || 0}</span>
+                          </div>
+                        )}
+                        
+                        {/* Links - placeholder for future enhancement */}
+                        {e.links && Array.isArray(e.links) && e.links.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {e.links.map((link: string, idx: number) => (
+                              <span key={idx} className="text-xs text-[var(--light-gray)] bg-white/5 border border-white/10 px-2 py-1 rounded">
+                                {link}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center">
+                <p className="text-[var(--medium-gray)] italic">No entities identified</p>
+              </div>
+            )}
+          </div>
+
+          {/* Overall Semantic Score */}
+          <div className="bg-white/5 border border-white/10 rounded-lg p-6 mb-6">
             <p className="text-sm font-semibold text-[var(--medium-gray)] mb-2">Overall Semantic Score</p>
             <p className="text-4xl font-bold text-white mb-4">
               {Math.round((entityDensity + topicCoverage + eeatScore) / 3)}/100
@@ -304,52 +380,47 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                 <p className="text-xs font-semibold text-[var(--info-blue)] mb-1">Topic Coverage</p>
                 <p className="text-2xl font-bold text-white">{topicCoverage}</p>
               </div>
-              <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3 text-center">
-                <p className="text-xs font-semibold text-purple-400 mb-1">E-E-A-T Score</p>
+              <div className="bg-[var(--orange-accent)]/20 border border-[var(--orange-accent)]/30 rounded-lg p-3 text-center">
+                <p className="text-xs font-semibold text-[var(--orange-accent)] mb-1">E-E-A-T Score</p>
                 <p className="text-2xl font-bold text-white">{eeatScore}</p>
               </div>
             </div>
           </div>
 
-          <h4 className="font-semibold text-white mb-2">Named Entities ({namedEntities.length})</h4>
-          <ul className="space-y-2 mb-4">
-            {namedEntities.length > 0 ? (
-              namedEntities.map((e: any, i: number) => (
-                <li key={i} className="flex items-center justify-between py-2 border-b border-white/10">
-                  <span>
-                    <strong className="text-white">{e.name || e.text}</strong> <span className="text-[var(--medium-gray)]">({e.type})</span>
-                  </span>
-                  <span className="text-sm text-[var(--light-gray)]">{e.mentions} mention{e.mentions > 1 ? 's' : ''}</span>
-                </li>
-              ))
-            ) : (
-              <li className="text-[var(--medium-gray)] italic">No entities identified</li>
-            )}
-          </ul>
-
-          <h4 className="font-semibold text-white mb-2">Key Topics</h4>
-          <ul className="space-y-2 mb-4">
+          {/* Key Topics Section */}
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-[var(--medium-gray)] mb-4 uppercase tracking-wide">Key Topics ({topics.length})</h4>
             {topics.length > 0 ? (
-              topics.map((t: any, i: number) => (
-                <li key={i} className="py-2 border-b border-white/10">
-                  <p className="font-medium text-white">{t.topic}</p>
-                  <p className="text-sm text-[var(--light-gray)] mt-1">
-                    <span className={`inline-block px-2 py-1 rounded text-xs mr-2 ${
-                      t.relevance === 'high' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                      t.relevance === 'medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                      'bg-white/10 text-[var(--light-gray)] border border-white/10'
-                    }`}>{t.relevance} relevance</span>
-                    <span className="text-[var(--medium-gray)]">{t.coverage} coverage</span>
-                  </p>
-                </li>
-              ))
+              <div className="space-y-3">
+                {topics.map((t: any, i: number) => (
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors">
+                    <p className="font-semibold text-white mb-2">{t.topic}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold ${
+                        t.relevance === 'high' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
+                        t.relevance === 'medium' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
+                        'bg-white/10 text-[var(--light-gray)] border border-white/10'
+                      }`}>
+                        {t.relevance} relevance
+                      </span>
+                      <span className="text-sm text-[var(--medium-gray)]">
+                        {t.coverage} coverage
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <li className="text-[var(--medium-gray)] italic">No topics identified</li>
+              <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center">
+                <p className="text-[var(--medium-gray)] italic">No topics identified</p>
+              </div>
             )}
-          </ul>
+          </div>
 
-          <h4 className="font-semibold text-white mb-3 text-lg">E-E-A-T Signals</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+          {/* E-E-A-T Signals Section */}
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-[var(--medium-gray)] mb-4 uppercase tracking-wide">E-E-A-T Signals</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="bg-[var(--info-blue)]/20 border border-[var(--info-blue)]/30 rounded-lg p-3">
               <p className="text-xs font-semibold text-[var(--info-blue)] mb-1">Author Credentials</p>
               <p className="text-2xl font-bold text-white">
@@ -362,14 +433,14 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                 {Array.isArray(eeatSignals.accreditation) ? eeatSignals.accreditation.length : 0}
               </p>
             </div>
-            <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3">
-              <p className="text-xs font-semibold text-purple-400 mb-1">Statistics/Data</p>
+            <div className="bg-[var(--info-blue)]/20 border border-[var(--info-blue)]/30 rounded-lg p-3">
+              <p className="text-xs font-semibold text-[var(--info-blue)] mb-1">Statistics/Data</p>
               <p className="text-2xl font-bold text-white">
                 {Array.isArray(eeatSignals.statistics) ? eeatSignals.statistics.length : 0}
               </p>
             </div>
-            <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3">
-              <p className="text-xs font-semibold text-yellow-400 mb-1">Expert Quotes</p>
+            <div className="bg-[var(--orange-light)]/20 border border-[var(--orange-light)]/30 rounded-lg p-3">
+              <p className="text-xs font-semibold text-[var(--orange-light)] mb-1">Expert Quotes</p>
               <p className="text-2xl font-bold text-white">
                 {typeof eeatSignals.expertQuotes === 'number' ? eeatSignals.expertQuotes : 0}
               </p>
@@ -380,22 +451,25 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                 {typeof eeatSignals.citations === 'number' ? eeatSignals.citations : 0}
               </p>
             </div>
+            </div>
           </div>
 
           {missingEntities.length > 0 && (
-            <>
-              <h4 className="font-semibold text-white mb-2">⚠️ Missing Critical Entities</h4>
-              <ul className="space-y-2">
-                {missingEntities.map((e: any, i: number) => (
-                  <li key={i} className="text-sm text-[var(--light-gray)]">
-                    <strong className="text-white">
-                      {typeof e === 'string' ? e : e.entity || JSON.stringify(e)}
-                    </strong>
-                    {e.reason && <span className="text-[var(--medium-gray)]"> - {e.reason}</span>}
-                  </li>
-                ))}
-              </ul>
-            </>
+            <div className="mb-6">
+              <>
+                <h4 className="text-sm font-semibold text-[var(--medium-gray)] mb-4 uppercase tracking-wide">⚠️ Missing Critical Entities</h4>
+                <div className="space-y-2">
+                  {missingEntities.map((e: any, i: number) => (
+                    <div key={i} className="bg-[var(--error-red)]/10 border border-[var(--error-red)]/20 rounded-lg p-4">
+                      <p className="text-sm text-white font-semibold mb-1">
+                        {typeof e === 'string' ? e : e.entity || JSON.stringify(e)}
+                      </p>
+                      {e.reason && <p className="text-sm text-[var(--light-gray)]">{e.reason}</p>}
+                    </div>
+                  ))}
+                </div>
+              </>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -481,7 +555,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 {result.checks.googleAIOverview.matchType && (
                                   <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${
                                     result.checks.googleAIOverview.matchType === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                    result.checks.googleAIOverview.matchType === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                    result.checks.googleAIOverview.matchType === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                     'bg-white/10 text-[var(--light-gray)] border border-white/10'
                                   }`}>
                                     {result.checks.googleAIOverview.matchType === 'exact' ? 'Exact' : result.checks.googleAIOverview.matchType === 'partial' ? 'Partial' : 'None'}
@@ -519,7 +593,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 const url = isObj ? (cite.url || '') : cite;
                                 const match = isObj ? cite.match : undefined;
                                 const badge = match === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                  match === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                  match === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                   'bg-white/10 text-[var(--light-gray)] border border-white/10';
                                 const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
                                 return (
@@ -553,7 +627,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 {result.checks.perplexity.matchType && (
                                   <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${
                                     result.checks.perplexity.matchType === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                    result.checks.perplexity.matchType === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                    result.checks.perplexity.matchType === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                     'bg-white/10 text-[var(--light-gray)] border border-white/10'
                                   }`}>
                                     {result.checks.perplexity.matchType === 'exact' ? 'Exact' : result.checks.perplexity.matchType === 'partial' ? 'Partial' : 'None'}
@@ -588,7 +662,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 const url = isObj ? (cite.url || '') : cite;
                                 const match = isObj ? cite.match : undefined;
                                 const badge = match === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                  match === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                  match === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                   'bg-white/10 text-[var(--light-gray)] border border-white/10';
                                 const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
                                 return (
@@ -622,7 +696,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 {result.checks.chatgpt.matchType && (
                                   <span className={`ml-2 inline-block px-2 py-0.5 rounded text-xs ${
                                     result.checks.chatgpt.matchType === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                    result.checks.chatgpt.matchType === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                    result.checks.chatgpt.matchType === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                     'bg-white/10 text-[var(--light-gray)] border border-white/10'
                                   }`}>
                                     {result.checks.chatgpt.matchType === 'exact' ? 'Exact' : result.checks.chatgpt.matchType === 'partial' ? 'Partial' : 'None'}
@@ -657,7 +731,7 @@ export default function ResultsDisplay({ data, onAnalyzeAnother }: ResultsDispla
                                 const url = isObj ? (cite.url || '') : cite;
                                 const match = isObj ? cite.match : undefined;
                                 const badge = match === 'exact' ? 'bg-[var(--success-green)]/20 text-[var(--success-green)] border border-[var(--success-green)]/30' :
-                                  match === 'partial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                  match === 'partial' ? 'bg-[var(--orange-light)]/20 text-[var(--orange-light)] border border-[var(--orange-light)]/30' :
                                   'bg-white/10 text-[var(--light-gray)] border border-white/10';
                                 const label = match === 'exact' ? 'Exact' : match === 'partial' ? 'Partial' : undefined;
                                 return (

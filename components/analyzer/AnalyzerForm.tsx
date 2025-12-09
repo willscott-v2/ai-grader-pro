@@ -75,7 +75,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
           disabled={isAnalyzing || schemaOnly}
           required={!schemaOnly}
         />
-        <p className="mt-2 text-sm text-[var(--muted-text)]">
+        <p className="mt-2 text-sm text-[var(--light-gray)]">
           Enter the main keyword or phrase you want this page to rank for
         </p>
       </div>

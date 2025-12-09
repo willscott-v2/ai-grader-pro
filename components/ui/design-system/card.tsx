@@ -8,7 +8,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         glass:
-          "bg-white/5 backdrop-blur-[10px] border border-white/10 shadow-[var(--shadow-lg)]",
+          "bg-white/5 backdrop-blur-[10px] border border-white/10 shadow-[var(--shadow-lg)] text-white",
         solid:
           "bg-white border border-[var(--border-gray)] shadow-[var(--shadow-sm)]",
         dark:
@@ -68,7 +68,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-bold leading-none tracking-tight",
+      "text-2xl font-bold leading-none tracking-tight text-white",
       className
     )}
     {...props}
@@ -82,7 +82,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-[var(--muted-text)]", className)}
+    className={cn("text-sm text-[var(--light-gray)]", className)}
     {...props}
   />
 ))

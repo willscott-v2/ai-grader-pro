@@ -59,8 +59,9 @@
   --transition-default: all 0.3s ease;
 
   /* Shadcn/ui compatibility (using Search Influence colors) */
-  --background: 0 0% 100%;
-  --foreground: 210 11% 15%; /* dark-blue */
+  /* Default to dark theme since app uses dark backgrounds */
+  --background: 210 11% 15%; /* dark-blue */
+  --foreground: 0 0% 100%; /* white */
   --card: 0 0% 100%;
   --card-foreground: 210 11% 15%;
   --popover: 0 0% 100%;

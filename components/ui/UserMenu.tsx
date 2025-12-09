@@ -55,7 +55,7 @@ export default function UserMenu() {
         <div className="w-8 h-8 rounded-full bg-[var(--orange-accent)] flex items-center justify-center text-white font-medium">
           {user.email?.[0].toUpperCase()}
         </div>
-        <span className="max-w-[150px] truncate">{user.email}</span>
+        <span className="max-w-[150px] truncate text-white">{user.email}</span>
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

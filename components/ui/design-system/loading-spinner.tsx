@@ -47,7 +47,7 @@ const LoadingSpinner = React.forwardRef<HTMLDivElement, LoadingSpinnerProps>(
           aria-label={label || "Loading"}
         />
         {label && (
-          <p className="text-sm font-medium text-[var(--muted-text)]">
+          <p className="text-sm font-medium text-[var(--light-gray)]">
             {label}
           </p>
         )}

@@ -47,7 +47,7 @@ function LoginForm() {
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[var(--dark-blue)] to-[var(--lighter-blue)]">
         <Card variant="glass" padding="lg" className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-white text-2xl">Check your email</CardTitle>
+            <CardTitle className="text-2xl">Check your email</CardTitle>
             <CardDescription className="text-[var(--light-gray)] text-base mt-1">
               We sent you a magic link to {email}
             </CardDescription>
@@ -78,7 +78,7 @@ function LoginForm() {
 
       <Card variant="glass" padding="lg" className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-white text-2xl">Welcome</CardTitle>
+          <CardTitle className="text-2xl">Welcome</CardTitle>
           <CardDescription className="text-[var(--light-gray)] text-base mt-1">
             Sign in with your email to get started
           </CardDescription>
@@ -86,7 +86,7 @@ function LoginForm() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white text-sm font-medium">
+              <Label htmlFor="email" className="text-sm font-medium">
                 Email
               </Label>
               <Input
