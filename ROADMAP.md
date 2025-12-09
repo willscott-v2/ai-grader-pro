@@ -81,7 +81,28 @@ AI search is more conversational than traditional search. While traditional Goog
 
 ## Future Feature Ideas
 
-### 2. Competitor Benchmarking
+### 2. Feedback Widget
+**Priority**: High
+**Status**: Planned
+**Reference**: The Ontologizer implementation
+
+Add in-app feedback collection:
+- Floating feedback button (bottom-right corner)
+- Modal for submitting feedback
+- Categories: Bug report, Feature request, General feedback
+- Store feedback in Supabase
+- Email notification to team on new submissions
+
+**Files to create**:
+- `components/ui/design-system/feedback-modal.tsx` - FeedbackButton and FeedbackModal components
+- `app/api/feedback/route.ts` - API endpoint for storing feedback
+- `supabase/migrations/XXX_feedback_table.sql` - Database table for feedback
+
+**Implementation Reference**: See `/Users/willscott/Development/ontologizer-app/components/ui/design-system/feedback-modal.tsx`
+
+---
+
+### 3. Competitor Benchmarking
 **Priority**: Medium
 **Status**: Idea phase
 
