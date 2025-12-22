@@ -21,7 +21,7 @@ function sanitizeMarkdown(markdown: string): string {
 async function runAnalysis(url: string, keyword: string, sendProgress: (message: string, step: string) => void) {
   // Dynamic imports for the analyzer modules
   const { analyzePageEntities } = await import('@/lib/analyzer/entity-discovery.js');
-  const { expandKeyword } = await import('@/lib/analyzer/keyword-expander.js');
+  const { expandKeyword, detectAudienceType } = await import('@/lib/analyzer/keyword-expander.js');
   const { checkAIVisibility } = await import('@/lib/analyzer/ai-visibility-checker.js');
   const { generateReportCard, exportReportCardMarkdown } = await import('@/lib/analyzer/report-generators.js');
   const { costTracker } = await import('@/lib/analyzer/cost-tracker.js');
@@ -60,9 +60,16 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
   console.log(`[Analysis] Step 2/3: Expanding keyword "${keyword}"`);
   sendProgress('Generating AI-ready search prompts...', '2/3');
   const location = (entities as any).entities?.location || (entities as any).pageData?.location || null;
+
+  // Detect audience type from entity analysis
+  const audienceContext = detectAudienceType((entities as any).entities || {}) as { audienceType: string; organizationType: string | null; signals: string[] };
+  if (audienceContext.signals.length > 0) {
+    console.log(`[Analysis] Detected audience: ${audienceContext.audienceType} (${audienceContext.signals.join(', ')})`);
+  }
+
   let keywordExpansion;
   try {
-    keywordExpansion = await expandKeyword(keyword, 5, location);
+    keywordExpansion = await expandKeyword(keyword, 5, location, audienceContext);
     console.log(`[Analysis] Generated ${keywordExpansion.length} keyword variations`);
   } catch (error: any) {
     console.error(`[Analysis] Keyword expansion failed: ${error.message}`);

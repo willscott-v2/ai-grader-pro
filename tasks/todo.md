@@ -1,95 +1,89 @@
-# UI Refactoring Plan: Match Ontologizer Look and Feel
+# Task: Make Prompt Generation Context-Aware
 
-## Summary
+## Problem
+The keyword expander generates prompts as if the user is a consumer looking for services (e.g., "What's the cost and is it covered by insurance?") when it should recognize educational contexts and generate student-focused prompts (e.g., "What's the tuition and are scholarships available?").
 
-Successfully refactored AI Grader Pro to match The Ontologizer's look and feel.
+## Root Cause
+- `expandKeyword()` only receives: keyword, count, location
+- But rich context is already available from entity analysis:
+  - `programEntities` (degree, certificate, course types)
+  - `jsonLdTypes` (e.g., EducationalOrganization, CollegeOrUniversity)
+  - `topics` with relevance info
+  - `pageData` with organization name and title
 
-## Root Cause Analysis
-
-### The Problem
-The app used CSS variables with light mode as default:
-- `--foreground: 210 11% 15%` (dark blue text)
-- `--background: 0 0% 100%` (white)
-
-But the page renders on a **dark blue gradient background**, creating a mismatch where:
-- Default text color was dark blue (inherited from body)
-- Text appeared black/illegible on dark backgrounds
-
-### The Solution
-1. Changed default `--foreground` to white in tokens.css
-2. Changed font from Geist to Inter
-3. Added explicit text colors to design system components
-4. Added `text-white` to glass card variant
+## Solution
+Pass additional context to `expandKeyword()` so Claude can generate appropriate prompts based on the audience type.
 
 ---
 
 ## Todo List
 
-### Phase 1: Font Change
-- [x] 1. Update `layout.tsx` to use Inter font instead of Geist
+- [x] **1. Add context parameter to `expandKeyword()` function**
+  - Add optional `context` parameter with: `audienceType`, `pageTitle`, `organizationType`
+  - File: `lib/analyzer/keyword-expander.js`
 
-### Phase 2: Fix Component Default Colors
-- [x] 2. Update `card.tsx` - add `text-white` default to CardTitle and glass variant
-- [x] 3. Update `card.tsx` - change CardDescription to `text-[var(--light-gray)]`
-- [x] 4. Update `UserMenu.tsx` - add `text-white` to email span
-- [x] 5. Update `label.tsx` - add `text-white` default to Label component
+- [x] **2. Detect audience type from entity analysis**
+  - Look for signals like: EducationalOrganization schema, degree/certificate programs, etc.
+  - Define audience types: `student`, `consumer`, `b2b`, `general`
+  - File: `lib/analyzer/keyword-expander.js` (added `detectAudienceType()` function)
 
-### Phase 3: Fix muted-text References
-- [x] 6. Update `AnalyzerForm.tsx` - change helper text to `text-[var(--light-gray)]`
-- [x] 7. Update `dashboard/page.tsx` - fix text colors for dark background
-- [x] 8. Update `loading-spinner.tsx` - change label to `text-[var(--light-gray)]`
+- [x] **3. Update prompt generation to use context**
+  - Modify Claude's system prompt to adapt language based on audience type
+  - Student: tuition, financial aid, enrollment, curriculum, career outcomes
+  - Consumer: cost, insurance, treatment, services
+  - B2B: pricing, contracts, integration, enterprise features
+  - File: `lib/analyzer/keyword-expander.js`
 
-### Phase 4: Root Cause Fix
-- [x] 9. Update `tokens.css` - change `--foreground` to white as default
+- [x] **4. Update callers to pass context**
+  - Update `lib/analyzer/index.js` (CLI)
+  - Update `app/api/analyze/route.ts` (web API)
 
-### Phase 5: Verification
-- [x] 10. Run the app and compare visually with Ontologizer
+- [x] **5. Test and deploy to Git/Vercel**
+  - Build successful
+  - Deploying...
 
 ---
 
-## Review Section
+## Review
 
 ### Changes Made
 
-1. **tokens.css**: Changed `--foreground` from dark blue to white - THIS WAS THE ROOT CAUSE FIX
-   - `--foreground: 0 0% 100%` (white instead of dark blue)
-   - `--background: 210 11% 15%` (dark blue)
+1. **lib/analyzer/keyword-expander.js**
+   - Added `detectAudienceType(entities)` function that analyzes:
+     - JSON-LD schema types (EducationalOrganization, MedicalOrganization, etc.)
+     - Program entities (degree, certificate, course)
+     - Topics (B2B indicators like enterprise, API, integration)
+     - Page title keywords (university, college, graduate, etc.)
+   - Returns `{ audienceType, organizationType, signals }`
+   - Added 4th parameter `context` to `expandKeyword()`
+   - Added audience-specific prompt instructions for:
+     - **Student**: tuition, financial aid, enrollment, curriculum, career outcomes
+     - **B2B**: pricing, enterprise plans, integration, ROI
+     - **Healthcare consumer**: cost, insurance, treatment, outcomes
 
-2. **layout.tsx**: Changed font from Geist to Inter (matching Ontologizer)
+2. **lib/analyzer/index.js** (CLI)
+   - Import `detectAudienceType` from keyword-expander
+   - Call `detectAudienceType()` after entity analysis
+   - Pass context to `expandKeyword()`
+   - Log detected audience type
 
-3. **card.tsx**:
-   - Added `text-white` to CardTitle default classes
-   - Added `text-white` to glass variant
-   - Changed CardDescription from `text-[var(--muted-text)]` to `text-[var(--light-gray)]`
-
-4. **UserMenu.tsx**: Added `text-white` to email span
-
-5. **label.tsx**: Added `text-white` to Label component default classes
-
-6. **AnalyzerForm.tsx**: Changed helper text from `text-[var(--muted-text)]` to `text-[var(--light-gray)]`
-
-7. **dashboard/page.tsx**:
-   - Changed text from `text-[var(--muted-text)]` to `text-[var(--light-gray)]`
-   - Changed email span from `text-foreground` to `text-white`
-
-8. **loading-spinner.tsx**: Changed label text from `text-[var(--muted-text)]` to `text-[var(--light-gray)]`
+3. **app/api/analyze/route.ts** (Web API)
+   - Import `detectAudienceType` from keyword-expander
+   - Call `detectAudienceType()` after entity analysis
+   - Pass context to `expandKeyword()`
+   - Log detected audience type
 
 ### Files Modified
-- `app/layout.tsx`
-- `app/styles/tokens.css`
-- `components/ui/design-system/card.tsx`
-- `components/ui/design-system/label.tsx`
-- `components/ui/design-system/loading-spinner.tsx`
-- `components/ui/UserMenu.tsx`
-- `components/analyzer/AnalyzerForm.tsx`
-- `app/dashboard/page.tsx`
+- `lib/analyzer/keyword-expander.js`
+- `lib/analyzer/index.js`
+- `app/api/analyze/route.ts`
 
-### Testing Done
-- Login page: "Welcome" and "Email" now display in white
-- All text on dark backgrounds is now readable
-- Font changed to Inter (matches Ontologizer)
+### Expected Behavior
+For a URL like `onlinepim.pharmacy.ufl.edu` (educational program):
+- **Before**: "What's the cost and is it covered by insurance?"
+- **After**: "What's the tuition and are scholarships available?"
 
-### Notes
-- The root cause was the `--foreground` CSS variable being set to dark blue while the app uses dark backgrounds
-- Changing `--foreground` to white fixed the cascading text color issue
-- The solid card variant (white background) still uses appropriate dark text for form elements
+The system will detect educational signals from:
+- Schema types (EducationalOrganization, CollegeOrUniversity)
+- Program entities (degree, certificate)
+- Title keywords (university, program, graduate)
