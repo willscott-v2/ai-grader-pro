@@ -48,6 +48,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
         <Input
           type="text"
           id="url"
+          variant="glass"
           value={url}
           onChange={(e) => {
             setUrl(e.target.value);
@@ -69,6 +70,7 @@ export default function AnalyzerForm({ onSubmit, isAnalyzing }: AnalyzerFormProp
         <Input
           type="text"
           id="keyword"
+          variant="glass"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Nursing Program"
