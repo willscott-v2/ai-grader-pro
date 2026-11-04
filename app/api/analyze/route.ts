@@ -49,11 +49,7 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
     });
   } catch (error: any) {
     console.error(`[Analysis] Entity analysis failed: ${error.message}`);
-    entities = {
-      url,
-      entities: { semanticScore: { entityDensity: 0, topicCoverage: 0, eeatScore: 0 } },
-      error: error.message,
-    };
+    throw error;
   }
 
   // Step 2: Expand keyword
@@ -73,11 +69,7 @@ async function runAnalysis(url: string, keyword: string, sendProgress: (message:
     console.log(`[Analysis] Generated ${keywordExpansion.length} keyword variations`);
   } catch (error: any) {
     console.error(`[Analysis] Keyword expansion failed: ${error.message}`);
-    keywordExpansion = [
-      { prompt: `What is ${keyword}?`, intent: 'informational', type: 'what' },
-      { prompt: `Best ${keyword}`, intent: 'comparison', type: 'best' },
-      { prompt: `How much does ${keyword} cost?`, intent: 'informational', type: 'cost' },
-    ];
+    throw error;
   }
 
   // Step 3: Check AI visibility
